@@ -1,0 +1,3222 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head prefix="og: http://ogp.me/ns#">
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="content-language" content="pl" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="robots" content="index, follow">
+        <title>Mieszkania na wynajem Witomino - Gdynia - Domiporta.pl</title>
+            <meta name="description" content="Mieszkania na wynajem w Domiporta.pl, Gdynia, Witomino. Zobacz 4 oferty (bezpośrednich i od agencji nieruchomości) mieszkań wystawionych na wynajem." />
+                            <link rel="canonical" href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino" />
+                        <link rel="image_src" href="http://www.domiporta.pl/img/domiporta_main_icon.png" />
+
+
+    <meta property="og:title" content="Mieszkania na wynajem Witomino - Gdynia - Domiporta.pl" />
+    <meta property="og:description" content="Mieszkania na wynajem w Domiporta.pl, Gdynia, Witomino. Zobacz 4 oferty (bezpośrednich i od agencji nieruchomości) mieszkań wystawionych na wynajem." />
+    <meta property="og:url" content="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino" />
+    <meta property="og:image" content="http://www.domiporta.pl/img/domiporta_main_icon.png" />
+        <meta property="og:site_name" content="Domiporta.pl" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="pl_PL" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@domiporta" />
+
+        <link rel="shortcut icon" href="/Resources/img/favicon.png" type="image/x-icon" />
+        <link rel="bookmark" href="/Resources/img/favicon.png" type="image/x-icon" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <script type="text/javascript">BaseDomainUrl = 'http://www.domiporta.pl/'</script>
+
+        <script type="text/javascript">
+var _kropka = _kropka || [];
+_kropka.push(['_service', 'DomiportaRW']);</script>
+
+
+
+
+
+<script type="text/javascript">
+    window.hostUrl = window.location.origin + '/';
+</script>
+
+
+    <link href="/Resources/bundles/styles/shared?v=WDcxHXaLgkpNUMNF_SomgHYPl6h6fpK_2dMsp3M1w5c1" rel="stylesheet"/>
+
+    <link href="/Resources/bundles/styles/legacy?v=62J7RCtutTAVWZMfj2fG47Zv8sOpdYDNQYzq6akq-Pw1" rel="stylesheet"/>
+
+    <link href="/Resources/bundles/styles/listing?v=ZLZRBTJ3joKKFw5OpXjZ1AIcgY56iilWq-OYEqyo_VY1" rel="stylesheet"/>
+
+
+
+
+<script>
+    // https://github.com/developit/mitt
+    !function (n, e) { "object" == typeof exports && "undefined" != typeof module ? module.exports = e() : "function" == typeof define && define.amd ? define(e) : n.mitt = e() }(this, function () { function n(n) { function e(e) { var t = e.toLowerCase(); return n[t] || (n[t] = []) } return n = n || {}, { on: function (n, t) { e(n).push(t) }, off: function (n, t) { var o = e(n), f = o.indexOf(t); ~f && o.splice(f, 1) }, emit: function (n, t) { e("*").concat(e(n)).forEach(function (n) { n(t) }) } } } return n });
+
+    var emitter = mitt();
+    var handleVisitedCalls = [];
+
+    (function () {
+        var parsedResponse;
+        var statisticsInterval;
+        var loadedElements = [];
+
+        var elements = {
+            adpremium: {
+                selector: '.WynikiLista > div.WynikiListaWyroznione',
+                fn: loadAdpremium,
+                intervalId: null
+            },
+            clonedAdpremium: {
+                selector: '.cloned-premiums-container',
+                fn: loadClonedAdpremium,
+                intervalId: null
+            },
+            top3: {
+                selector: '.OgloszeniaPromowane',
+                fn: loadTop3,
+                intervalId: null
+            },
+            sendToManyForm: {
+                selector: '#SendToManyForm',
+                fn: updateSendToMany,
+                intervalId: null
+            }
+        }
+
+        function parseHTML(xhrResponse) {
+            var tmp = document.implementation.createHTMLDocument('adpremium'); // aparently createHTMLDocument 'title' argument is not optional for IE and Edge...
+            tmp.body.innerHTML = xhrResponse;
+            return tmp.body.children;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/wyroznione', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    loadSuccess(xhr);
+                } else {
+                    _kropka.push(['AdwordsAjaxError']);
+                }
+            }
+        }
+
+        function loadSuccess(xhr) {
+            var handleVisitedDetails = handleVisitedDetails || {};
+            parsedResponse = parseHTML(xhr.response);
+
+            typeof handleVisitedDetails.init === 'function' ? handleVisitedDetails.init(1) : handleVisitedCalls.push(1);
+
+            if (!parsedResponse.length) {
+                statisticsInterval = setInterval(notifyStatistics, 50);
+            } else {
+                notifyStatistics();
+            }
+        }
+
+        function notifyStatistics() {
+            if (statisticsInterval) clearInterval(statisticsInterval);
+
+            var kropkaWyroznioneElement = filterResponse('id', 'Kropka2_WynikiOdslonaOgloszeniaWyroznione');
+            if (kropkaWyroznioneElement.length) {
+                var kropkaWyroznioneText = kropkaWyroznioneElement[0].textContent.trim().split(',');
+                if (kropkaWyroznioneText.length && kropkaWyroznioneText[0]) {
+                    _kropka.push(['WynikiOdslonaOgloszeniaWyroznione'].concat(kropkaWyroznioneText));
+                }
+            }
+
+            var kropkaPremiumElement = filterResponse('id', 'Kropka2_WynikiOdslonaOgloszeniaPromowane');
+            if (kropkaPremiumElement.length) {
+                var kropkaPremiumText = kropkaPremiumElement[0].textContent.trim().split(',');
+                if (kropkaPremiumText.length && kropkaPremiumText[0]) {
+                    _kropka.push(['WynikiOdslonaOgloszeniaPromowane'].concat(kropkaPremiumText));
+                }
+            }
+        }
+
+        function checkResponseAvailability(element) {
+            if (parsedResponse) {
+                element.fn();
+                clearInterval(element.intervalId);
+            }
+        }
+
+        function filterResponse(type, value, cb) {
+            var predicateMethod;
+            var response;
+
+            function classPredicate(element) {
+                return element.classList.contains(value);
+            }
+
+            function idPredicate(element) {
+                return element.id === value;
+            }
+
+            if (type === 'class') {
+                predicateMethod = classPredicate;
+            } else if (type === 'id') {
+                predicateMethod = idPredicate;
+            }
+
+            response = [].filter.call(parsedResponse, function (element) {
+                return predicateMethod(element);
+            });
+
+            if (cb !== undefined) cb(response);
+
+            return response;
+        }
+
+        emitter.on('elementLoaded', function (e) {
+            if (elements[e.element]) {
+                var loadedElement = elements[e.element];
+
+                if (!parsedResponse) {
+                    loadedElements.push(loadedElement);
+
+                    loadedElement.intervalId = setInterval(function () {
+                        checkResponseAvailability(loadedElement);
+                    }, 50);
+                } else {
+                    loadedElement.fn();
+                }
+            }
+        });
+
+        xhr.send('Localization=pomorskie%2C%20Gdynia%2C%20Witomino&Pietro.From=4&AdType=wynajme&CategoryName=mieszkanie&Map=False');
+
+        function loadAdpremium() {
+            var topAdpremiumsContainer = document.querySelector(elements.adpremium.selector);
+            var topAdpremiumsHTML = filterResponse('class', 'WynikiListaWyroznione', evalSessionStorageScript);
+
+            function evalSessionStorageScript(response) {
+                if (!response || response.length === 0) return;
+
+                var responseScript = response[0].querySelector('script');
+                if (!responseScript) return;
+
+                var scriptBody = responseScript.innerText.trim();
+
+                var newScript = document.createElement('script');
+                newScript.innerText = scriptBody;
+
+                document.body.appendChild(newScript);
+            }
+
+            function loadPhoneCarousels(carousels) {
+                $(carousels).slick({
+                    lazyLoad: 'ondemand',
+                    slidesToShow: 1,
+                    arrows: false,
+                    draggable: true
+                }).on('swipe', function () {
+                    $('.gallery-hint').fadeOut('50');
+                }).on('lazyLoadError', function (e) {
+                    $(e.target).find('.slick-current').addClass('placeholder-picture--broken');
+                });
+            }
+
+            if (topAdpremiumsHTML.length) {
+                topAdpremiumsContainer.outerHTML = topAdpremiumsHTML[0].outerHTML;
+
+                if (!document.body.classList.contains('Phone')) return;
+
+                var carousels = document.querySelectorAll('.WynikiListaWyroznione .detail-card__carousel');
+
+                if (carousels.length === 0) return;
+
+                if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                    loadPhoneCarousels(carousels);
+                } else {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        loadPhoneCarousels(carousels);
+                    });
+                }
+            }
+        }
+
+        function loadClonedAdpremium() {
+            var clonedAdpremiumsContainer = document.querySelector(elements.clonedAdpremium.selector);
+            var clonedAdpremiumsWrapper = filterResponse('class', 'WynikiListaWyroznioneDodatkowe');
+
+            if (clonedAdpremiumsWrapper.length) {
+                var clonedAdpremiumsHTML = [].slice.call(clonedAdpremiumsWrapper[0].children);
+                [].forEach.call(clonedAdpremiumsHTML, function (element) {
+                    clonedAdpremiumsContainer.appendChild(element);
+                });
+
+                var clonedAdpremiumsInfoElements = clonedAdpremiumsContainer.querySelectorAll('.additional-promoted__info');
+                [].forEach.call(clonedAdpremiumsInfoElements, function (element) {
+                    // IE doesn't support calc() in transforms, calculating it manually here instead
+                    var titleHeight = element.querySelector('h4').offsetHeight;
+                    var transformValue = -titleHeight - 12;
+
+                    element.style.transform = 'translateY(' + transformValue + 'px)';
+                });
+            }
+        }
+
+        function loadTop3() {
+            var top3Container = document.querySelector(elements.top3.selector);
+            var top3HTML = filterResponse('class', 'OgloszeniaPromowane');
+
+            if (top3HTML.length) {
+                top3Container.outerHTML = top3HTML[0].outerHTML;
+            }
+        }
+
+        function updateSendToMany() {
+            var sendToManyForm = document.querySelector(elements.sendToManyForm.selector);
+
+            if (sendToManyForm) {
+                var adpremiumsToSendToMany = [].filter.call(parsedResponse, function (element) {
+                    return element.name && (element.name === 'Top3Ids' || element.name === 'RandomIds');
+                });
+
+                [].forEach.call(adpremiumsToSendToMany, function (element) {
+                    sendToManyForm.appendChild(element);
+                });
+            }
+        }
+    })();
+</script>
+
+    <script src="/Resources/Scripts/jquery?v=EEZBCVzQe1TpkEUeLfjEm53wpuqSSXGjiXFWAVaewp81"></script>
+
+    <script src="/Resources/Scripts/common?v=KSPJsUDyr-zi937x-2Bu73HYl9ujSj59ZUF5UTkZ2Nk1"></script>
+
+    <script src="/Resources/Scripts/commonPc?v=ZXieSCL-dEB4UR1OeYnjaU3OMHZUTxOZt8E_JBaHQmg1"></script>
+
+
+
+        <!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+ fbq('init', '711380165675547');
+fbq('track', 'PageView');
+</script>
+<noscript>
+    <img height="1" width="1"
+         src="https://www.facebook.com/tr?id=711380165675547&ev=PageView
+&noscript=1" />
+</noscript>
+<!-- End Facebook Pixel Code -->
+
+
+
+
+    <script type="text/javascript">
+        var dfpParams = dfpParams || {};
+        dfpParams.slots = dfpParams.slots || {};
+
+        dfpParams.prefix = '/75224259/AGORA-TR/Domiporta/rynekwtorny';
+
+        dfpParams.dir = 'domiporta.pl-PM';
+        dfpParams.dx = '-20503';
+        dfpParams.jsp = 30;
+        dfpParams.kw = 'miasto_gdynia,dzielnica_witomino';
+
+        dfpParams.domena = window.top.location.hostname;
+        dfpParams.url = encodeURIComponent(window.top.location.href);
+    </script>
+    <style type="text/css">
+        .adviewDFPBanner {
+            text-align: center;
+            padding-bottom: 5px;
+        }
+
+            .adviewDFPBanner .banLabel {
+                max-height: 14px;
+                text-transform: uppercase;
+                margin-top: 6px;
+                font: 400 10px Arial,sans-serif;
+                padding-bottom: 2px;
+                text-align: left;
+                color: #999;
+            }
+
+        body.desk #page-top {
+            position: relative;
+        }
+    </style>
+        <script type='text/javascript'>
+            (function() {
+                var useSSL = 'https:' == document.location.protocol;
+                var src = (useSSL ? 'https:' : 'http:') +
+                    '//www.googletagservices.com/tag/js/gpt.js';
+                document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+            })();
+        </script>
+    <script type='text/javascript'>
+
+        googletag.cmd.push(function() {
+            var mobileSizeMap = googletag.sizeMapping()
+                .addSize([336, 0], [[300, 250], [320, 250], [300, 150], [320, 150], [336, 280]])
+                .addSize([0, 0], [[300, 250], [320, 250], [300, 150], [320, 150]])
+                .build();
+
+            googletag.defineSlot(dfpParams.prefix+'/071-WINIETA', [[1920,100]], 'div-071-WINIETA').setTargeting('pos', ['071-WINIETA']).addService(googletag.pubads());
+            googletag.defineSlot(dfpParams.prefix+'/001-TOPBOARD', [[728,90],[750,100],[750,200],[750,300],[940,300],[970,250],[1170,300]], 'div-001-TOPBOARD').setTargeting('pos', ['001-TOPBOARD']).addService(googletag.pubads());
+            googletag.defineSlot(dfpParams.prefix+'/056-NAVIBOARD', [[960,30]], 'div-056-NAVIBOARD').setTargeting('pos', ['056-NAVIBOARD']).addService(googletag.pubads());
+            googletag.defineSlot(dfpParams.prefix+'/050-SHORTBOX-A', [[728,90],[750,100],[860,100]], 'div-050-SHORTBOX-A').setTargeting('pos', ['050-SHORTBOX-A']).addService(googletag.pubads());
+            googletag.defineSlot(dfpParams.prefix+'/050-SHORTBOX-B', [[728,90],[750,100],[860,100]], 'div-050-SHORTBOX-B').setTargeting('pos', ['050-SHORTBOX-B']).addService(googletag.pubads());
+            googletag.defineSlot(dfpParams.prefix+'/003-RECTANGLE', [[300,250],[300,600],[300,800],[160,600],[120,600]], 'div-003-RECTANGLE').setTargeting('pos', ['003-RECTANGLE']).addService(googletag.pubads());
+            googletag.defineOutOfPageSlot(dfpParams.prefix+'/019-TOPLAYER', 'div-019-TOPLAYER').setTargeting('pos', ['019-TOPLAYER']).addService(googletag.pubads());
+            googletag.defineSlot(dfpParams.prefix+'/042-FOOTBOARD', [[728,90]], 'div-042-FOOTBOARD').setTargeting('pos', ['042-FOOTBOARD']).addService(googletag.pubads());
+
+            googletag.pubads().setTargeting('jsp', '30');
+            googletag.pubads().setTargeting('wojewodztwo', 'pomorskie');
+            googletag.pubads().setTargeting('miasto', 'Gdynia');
+            googletag.pubads().setTargeting('kategoria', 'domiporta_mieszkania');
+            googletag.pubads().setTargeting('rodzaj', 'wynajem');
+
+            if (location.href.indexOf("adtest") != -1) {
+                googletag.pubads().setTargeting('kw', 'adtest');
+            }
+
+            var _YB=_YB||{ab:function(){return (_YB.dool?'b':'a'+Math.floor(Math.random()*10));},dc:function(){return (_YB.dool?'d':'c'+Math.floor(Math.random()*20));},mx:function(){return (!_YB.dool?'x':'m'+Math.floor(Math.random()*180));},tt:function(){return ('tt'+Math.floor(Math.random()*10));},dool:Math.random()>=0.1};
+            googletag.pubads().getSlots().forEach(function(slot){slot.setTargeting('yb_ab', _YB.ab());});
+            googletag.pubads().getSlots().forEach(function(slot){slot.setTargeting('yb_dc', _YB.dc());});
+            googletag.pubads().getSlots().forEach(function(slot){slot.setTargeting('yb_mx', _YB.mx());});
+            googletag.pubads().getSlots().forEach(function(slot){slot.setTargeting('yb_tt', _YB.tt());});
+            googletag.pubads().setTargeting('yb_ff', String(Math.round(Math.random())));
+            var _yt=new Date(),yb_th=_yt.getUTCHours()-8,yb_tm=_yt.getUTCMinutes(),yb_wd=_yt.getUTCDay();if(yb_th<0){yb_th=24+yb_th;yb_wd-=1;};if(yb_wd<0){yb_wd=7+yb_wd};
+            googletag.pubads().setTargeting('yb_th', yb_th.toString());
+            googletag.pubads().setTargeting('yb_tm', yb_tm.toString());
+            googletag.pubads().setTargeting('yb_wd', yb_wd.toString());
+
+            googletag.pubads().addEventListener('slotRenderEnded', function(ev) {
+                if (ev.slot.getSlotElementId() === 'div-042-FOOTBOARD' && !ev.isEmpty) {
+                    var investmentWrapper = document.querySelector('.investments-wrapper');
+                    investmentWrapper.style.display = 'none';
+                }
+
+            });
+
+googletag.pubads().enableSyncRendering();            googletag.enableServices();
+
+        });
+
+        function dfpLabel(){for(var a=document.getElementsByClassName("adviewDFPBanner"),b=0;b<a.length;b++){var c=a[b];c.clientHeight>40&&-1!==dfpArrLab.indexOf(c.id)&&(c.getElementsByClassName("banLabel")[0].style.display="block")}}
+        function EAS_load_fif_DFP(a,b,c,d,e){if(!a)return!1;for(var f=document,g=f.getElementById(a);g.hasChildNodes();)g.removeChild(g.lastChild);var h=f.createElement("iframe");h.src=b,h.style.width=d+"px",h.style.height=e+"px",h.style.margin=0,h.style.borderWidth=0,h.style.padding=0,h.scrolling="no",h.frameBorder=0,h.allowTransparency=!0,h.className="banDfpFIF",h.id=a+"_FIF",h.EAS_src=c,g.appendChild(h)}
+        function putBanDFP(a,b){if(!b)return!1;var c=window.location.protocol+"//"+window.location.host+"/dfptools/adview/";EAS_load_fif_DFP(b,c+dfpParams.slots[a].url,c+"autoslot.js",0,0)}
+        var dfpArrLab=["056-NAVIBOARD", "050-SHORTBOX-A", "050-SHORTBOX-B", "003-RECTANGLE"],dfpR=setInterval(function(){"complete"===document.readyState&&(clearInterval(dfpR),dfpLabel())},100);
+    </script>
+
+    </head>
+    <body class="WynikiWyszukiwania Pc">
+
+        <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-MVXK8F" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = '//www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-MVXK8F');</script>
+<!-- End Google Tag Manager -->
+
+
+    <!-- (C)2000-2014 Gemius SA - gemiusAudience -->
+    <script type="text/javascript">
+    <!--//--><![CDATA[//><!--
+    var pp_gemius_identifier = 'pyBAgfOLTwzULOJx76r4kMPJ78cWT2efbkCg1mZfc73.47';
+    // lines below shouldn't be edited
+    function gemius_pending(i) { window[i] = window[i] || function() {var x = window[i+'_pdata'] = window[i+'_pdata'] || []; x[x.length]=arguments;};};
+    gemius_pending('gemius_hit'); gemius_pending('gemius_event'); gemius_pending('pp_gemius_hit'); gemius_pending('pp_gemius_event');
+    (function(d,t) {try {var gt=d.createElement(t),s=d.getElementsByTagName(t)[0],l='http'+((location.protocol=='https:')?'s':''); gt.setAttribute('async','async');
+    gt.setAttribute('defer','defer'); gt.src=l+'://gazeta.hit.gemius.pl/xgemius.js'; s.parentNode.insertBefore(gt,s);} catch (e) {}})(document,'script');
+    //--><!]]>
+    </script>
+
+
+
+    <script type="text/javascript">
+        var gfkSstConf = {
+            "url": "config.sensic.net/pl1-sst-w.js",
+            "media": "domiportaPL",
+            "content": 'domiporta--rwd--wyniki--mieszkania--11'
+        };
+
+        (function(w, d, c, s, id) {
+            if (d.getElementById(id)) {
+                return;
+            }
+            w[id] = w[id] || function() {
+                if ("undefined" == typeof gfkSstApi) {
+                    w[id].queue.push(arguments[0]);
+                } else {
+                    gfkSstApi.impression(arguments[0]);
+                }
+            };
+            w[id].queue = w[id].queue || [];
+            var tag = d.createElement(s);
+            var el = d.getElementsByTagName(s)[0];
+            tag.id = id;
+            tag.async = true;
+            tag.src = '//' + c.url;
+            el.parentNode.insertBefore(tag, el);
+        })(window, document, gfkSstConf, 'script', 'gfkSst');
+    </script>
+
+
+        <script src="/Resources/Scripts/CheckAdBloker?v=aaAYHUYTJpDYlkQNEwa9dpT7BFqkudgmxIIqjLcWDKY1"></script>
+
+
+
+
+<script type="text/javascript" src="http://cookies.trader.pl/js?type=domiporta"></script>
+<noscript>
+    <div class="cookie300">
+        <a href="http://www.trader.pl/cookies-informacje.asp" title="">
+            <img src="http://cookies.trader.pl/nojs?size=300px" alt="" />
+        </a>
+    </div>
+    <div class="cookie400">
+        <a href="http://www.trader.pl/cookies-informacje.asp" title="">
+            <img src="http://cookies.trader.pl/nojs?size=400px" alt="" />
+        </a>
+    </div>
+    <div class="cookie500">
+        <a href="http://www.trader.pl/cookies-informacje.asp" title="">
+            <img src="http://cookies.trader.pl/nojs?size=500px" alt="" />
+        </a>
+    </div>
+    <div class="cookie700">
+        <a href="http://www.trader.pl/cookies-informacje.asp" title="">
+            <img src="http://cookies.trader.pl/nojs?size=700px" alt="" />
+        </a>
+    </div>
+</noscript>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/Resources/Scripts/advertisement.js"></script>
+<div class="WynikiWyszukiwania" id="scrollbackground">
+
+<div class="Winieta">
+    <div class="adviewDFPBanner DFP-071-WINIETA" id="071-WINIETA"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-071-WINIETA"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-071-WINIETA'); });</script></div></div>
+</div>
+    <div class="relative-container-full-page">
+
+<header class="page-header">
+    <div class="header-content">
+        <a class="page-logo" href="http://www.domiporta.pl/" title="Domiporta - ogłoszenia nieruchomości">
+            <img src="/Resources/img/dp-logo.svg" width="201" height="29" alt="Domiporta - ogłoszenia nieruchomości" title="Domiporta - ogłoszenia nieruchomości" />
+        </a>
+
+<nav class="page-menu">
+    <ul class="clearfix">
+        <li class="notices">
+            <a href="#" title="Ogłoszenia" class="expandable-element clearfix" onclick="dataLayer.push({ 'event': 'naviStatOg0' });">
+                Ogłoszenia<span></span>
+            </a>
+            <div class="submenu">
+    <div>
+            <span>&gt; <a href="/mieszkania/wszystkie" title="" onclick="dataLayer.push({ 'event': 'naviStatOg1' });">Mieszkania</a> <span>(188&#160;435)</span></span>
+                    <span>&gt; <a href="/domy/wszystkie" title="" onclick="dataLayer.push({ 'event': 'naviStatOg2' });">Domy</a> <span>(76&#160;212)</span></span>
+                    <span>&gt; <a href="/dzialki/wszystkie" title="" onclick="dataLayer.push({ 'event': 'naviStatOg3' });">Działki</a> <span>(99&#160;213)</span></span>
+                    <span>&gt; <a href="/lokale-uzytkowe/wszystkie" title="" onclick="dataLayer.push({ 'event': 'naviStatOg6' });">Lokale użytkowe</a> <span>(86&#160;717)</span></span>
+    </div>
+    <div>
+            <span>&gt; <a href="/pokoje/wszystkie" title="" onclick="dataLayer.push({ 'event': 'naviStatOg4' });">Pokoje</a> <span>(42)</span></span>
+                    <span>&gt; <a href="/garaze/wszystkie" title="" onclick="dataLayer.push({ 'event': 'naviStatOg5' });">Garaże</a> <span>(252)</span></span>
+
+        <span>&gt; <a href="/nieruchomosci/wszystkie" onclick="dataLayer.push({ 'event': 'naviStatOg7' });">Wszystkie nieruchomości</a> <span>(450&#160;871)</span></span>
+    </div>
+
+</div>
+
+        </li>
+        <li class="developers">
+            <a href="#" title="Rynek pierwotny" class="expandable-element clearfix" onclick="dataLayer.push({ 'event': 'naviStatRp0' });">
+                Rynek pierwotny<span></span>
+            </a>
+            <div class="submenu">
+    <div>
+            <span>&gt; <a href="/nowe/mieszkania" title="" onclick="dataLayer.push({ 'event': 'naviStatRp1' });">Nowe Mieszkania</a> <span>(26&#160;631)</span></span>
+                    <span>&gt; <a href="/nowe/apartamenty" title="" onclick="dataLayer.push({ 'event': 'naviStatRp2' });">Apartamenty</a> <span>(1&#160;715)</span></span>
+                            <span>&gt; <a href="/nowe/domy" title="" onclick="dataLayer.push({ 'event': 'naviStatRp4' });">Domy</a> <span>(796)</span></span>
+                    <span>&gt; <a href="/nowe/lokale-uzytkowe" title="" onclick="dataLayer.push({ 'event': 'naviStatRp7' });">Lokale użytkowe</a> <span>(323)</span></span>
+    </div>
+    <div>
+            <span>&gt; <a href="/mdm/mieszkania" title="" onclick="dataLayer.push({ 'event': 'naviStatRp5' });">Program MDM</a> <span>(2&#160;374)</span></span>
+
+        <span>&gt; <a href="/nowe/inwestycje" title="" onclick="dataLayer.push({ 'event': 'naviStatRp6' });">Wszystkie nieruchomości</a> <span>(27&#160;750)</span></span>
+    </div>
+
+</div>
+
+        </li>
+        <li class="house-projects"><a href="http://projektydomow.domiporta.pl/" title="Projekty domów" onclick="dataLayer.push({ 'event': 'naviStatProjekty' });" class="yl-link">Projekty domów</a></li>
+        <li class="credits"><a href="https://ad.doubleclick.net/ddm/trackclk/N438807.1189846DOMIPORTA.PL/B10459233.144343402;dc_trk_aid=317548022;dc_trk_cid=77583542;pic=0;sub_id=0;rata=0;dc_lat=;dc_rdid=;tag_for_child_directed_treatment=" title="Kredyty i ubezpieczenia" onclick="dataLayer.push({ 'event': 'naviStatKredyty' });" class="yl-link" rel="nofollow noopener">Kredyty</a></li>
+        <li class="advices"><a href="http://www.domiporta.pl/poradnik" title="Porady i wnętrza" onclick="dataLayer.push({ 'event': 'naviStatPorady' });" class="yl-link">Porady</a></li>
+        <li class="legrand"><a href="/legrand_rozgalezniki_przedluzacze" data-url="/legrand_rozgalezniki_przedluzacze" rel="nofollow noopener" title="Legrand. Żyj kolorowo" class="yl-link" target="_blank" style="display:block !important;">Przedłużaj i rozgałęziaj na kolorowo</a></li>
+    </ul>
+            <!-- (c) 2000-2017 Gemius SA version 2.0 Impressions: campaign: Domiporta_13.06.2017_Legrand, placement: /Legrand , creative: Link LEGRAND w nawigacji na listingu  -->
+                <i id="_gde_isndwl_vkpfjrpqxx" style="display: none !important; visibility: hidden !important"></i>
+                <script type="text/javascript">
+                    (_gdeaq = window._gdeaq || []).push(['hit', 'gazeta', 'nAEwsgRRy1byiSDLnJbFB5aG7MpRLkRlYCULtFApTaT.P7', 'yjipfufmnc', 'kbiqvpscvgszrqblmqwmloulvvoc'],
+                    ['viewable', 'gazeta', 'nAEwsgRRy1byiSDLnJbFB5aG7MpRLkRlYCULtFApTaT.P7', 'vkpfjrpqxx', '_gde_isndwl_vkpfjrpqxx']);
+                </script>
+                <script type="text/javascript" src="//gazeta.hit.gemius.pl/gdejs/xgde.js"> </script>
+            <!-- (c) 2000-2017 Gemius SA version 2.0 Clicks clickTag: campaign: Domiporta_13.06.2017_Legrand, placement: /Legrand , creative: Link LEGRAND w nawigacji na listingu  -->
+        <script>
+            $(".legrand a").on("click", function (e) {
+                e.preventDefault();
+                var url = $(e.target).data("url");
+                window.open(url);
+            });
+        </script>
+</nav>
+        <div class="header-right-actions clearfix">
+                <div class="seo-box-manual">
+                    <div class="seo-box-manual__icon" id="openSeoBoxManual">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="19" viewBox="0 0 24 24"><path d="M12 3c-4.006 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408-.212-3.951-3.473-7.092-7.479-7.092z" /></svg>
+                        </span>
+                    </div>
+                    <div class="seo-box-manual__body" style="display: none;">
+                        <div class="seo-box-manual__wrapper">
+                            <ul>
+<li><a href="https://nowyrynekpierwotny.pl/mieszkania/mazowieckie/warszawa">Nowe mieszkania Warszawa</a></li>
+<li><a href="http://www.domiporta.pl/mieszkanie/sprzedam/mazowieckie/warszawa?Rodzaj=Bezposrednie">Mieszkania Warszawa bezpośrednio</li>
+<li><a href="http://www.domiporta.pl/mieszkanie/sprzedam/malopolskie/krakow?Rodzaj=Bezposrednie">Mieszkania Kraków bezpośrednio</li>
+<li><a href="http://www.domiporta.pl/mieszkanie/sprzedam/dolnoslaskie/wroclaw?Rodzaj=Bezposrednie">Mieszkania Wrocław bezpośrednio</li>
+<li><a href="http://www.domiporta.pl/mieszkanie/sprzedam/wielkopolskie/poznan?Rodzaj=Bezposrednie">Mieszkania Poznań bezpośrednio</li>
+</ul>
+<ul>
+<li>Polecane artykuły</li>
+<li><a href="http://www.domiporta.pl/poradnik/7,126870,21631792,koszt-budowy-domu-2017.html">Koszt budowy domu</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/7,126870,21631730,ksiega-wieczysta-online-kompedium.html">Księgi wieczyste</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/7,126870,21630162,umowa-przedwstepna-porady.html">Umowa przedwstępna</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126867,9300684,Biuro_w_domu___za_i_przeciw.html">Biuro w domu</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126867,11797164,Jak_kupic_mieszkanie_na_rynku_wtornym_.html">Jak kupić mieszkanie na rynku wtórnym</a></li>
+<li><a href="http://www.domiporta.pl/kupno-mieszkania-od-dewelopera">Jak kupić mieszkanie od developera</a></li>
+<li><a href="http://www.domiporta.pl/jak-sprzedac-mieszkanie/">Jak sprzedać mieszkanie</a></li>
+</ul>
+<ul>
+<li><a href="http://www.domiporta.pl/jak-wynajac-mieszkanie">Jak wynająć mieszkanie</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126868,7099134,Kredyty_dla_mlodych_malzenstw___panstwo_doplaci_na.html">Kredyt dla młodych małżeństw</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126925,13154043,meldunek-czasowy-nieistotny-choc-obowiazkowy.html">Meldunek tymczasowy</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126867,7090738,Mieszkania_bezczynszowe__ale_z_oplatami.html">Mieszkanie bezczynszowe</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126924,2080089.html">Odbiór mieszkania</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126924,14158045,co-powinna-zawierac-umowa-posrednictwa-w-obrocie-nieruchomosciami.html">Umowa pośrednictwa</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126868,13863847,wczesniejsza-splata-kredytu-czy-to-sie-oplaca.html">Wcześniejsza spłata kredytu</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/1,126867,10272230,czy-piorunochrony-chronia-sprzet-w-domu-oraz-nasze-zdrowie-i.html">Piorunochron</a></li>
+<li><a href="http://www.domiporta.pl/poradnik/56,126867,18398773,10-bledow-ktore-popelnisz-ogladajac-mieszkanie-na-wynajem.html">Wynajem mieszkania na co zwrócić uwagę</a></li>
+</ul>
+
+                        </div>
+                    </div>
+                </div>
+            <div class="clipboard-counter">
+                <a href="/Search/Clipboard" class="UlubioneIco" title="Schowek">
+                    <span href="/Search/Clipboard" class="UlubioneIloscIco">
+                        <span class="IloscWiadomosci"></span>
+                    </span>
+                </a>
+            </div>
+            <div id="loginInfo" class="ajaxLoadedContent" data-href="/Account/LoginInfo" data-method="POST">
+                <a href="/logowanie/logon" class="expandable-element header__login-menu" onclick="dataLayer.push({ 'event': 'naviStatLogIn' });">Moje konto</a>
+            </div>
+            <a class="dp-button btn-add-advert" href="https://www.domiporta.pl/dodawanie-ogloszenia-nieruchomosci" title="Dodaj ogłoszenie" onclick="dataLayer.push({ 'event': 'naviStatDodOgl' });">+ Dodaj ogłoszenie</a>
+
+        </div>
+    </div>
+</header>
+
+        <article>
+            <main id="rw-listing">
+                <section>
+                    <div id="OstatnieWyszukiwaniaNaWynikach" class="OstatnieWyszukiwania"></div>
+                </section>
+
+                <section class="search-wrapper">
+
+
+<div class="hideSearchMobile"><span>ukryj wyszukiwarkę</span><span></span></div>
+    <section id="PanelWyszukiwarki" class="Wyniki">
+        <div class="TextalignCenter Wyszukiwarka WyszukiwarkaKontener WyszukiwarkaMapa">
+<form action="http://www.domiporta.pl/Search/Szukaj" id="HpSearchForm" method="post" onsubmit="youLeadSearchSubmit(&#39;Search&#39;)">                <div class="WyszukiwarkaKontent">
+                    <input data-val="true" data-val-number="The field LocalizationId must be a number." id="LocalizationId" name="LocalizationId" type="hidden" value="69913" />
+                    <input data-val="true" data-val-required="The SortingOrder field is required." id="SortingOrder" name="SortingOrder" type="hidden" value="SortDate" />
+                    <input data-val="true" data-val-required="The SortingDirection field is required." id="SortingDirection" name="SortingDirection" type="hidden" value="Descending" />
+
+                    <input type="hidden" name="Bounds.NorthEast.Lat" class="GeoBounds" value="" />
+                    <input type="hidden" name="Bounds.NorthEast.Lng" class="GeoBounds" value="" />
+                    <input type="hidden" name="Bounds.SouthWest.Lat" class="GeoBounds" value="" />
+                    <input type="hidden" name="Bounds.SouthWest.Lng" class="GeoBounds" value="" />
+
+                    <div class="FloatLeft Kolumna1 clearfix">
+                        <div class="FloatLeft Rynek clearfix ui-buttonset">
+                            <input class="ui-helper-hidden-accessible" type="radio" name="Rynek" id="Rynek1" value="Wszystkie" checked=true />
+                            <label for="Rynek1" class="ui-state-active" onclick="dataLayer.push({ 'event': 'wynikiSearchOg0' });">Ogłoszenia</label>
+                            <input class="ui-helper-hidden-accessible" type="radio" name="Rynek" id="Rynek2" value="Pierwotny"  />
+                            <label for="Rynek2" onclick="dataLayer.push({ 'event': 'wynikiSearchRp0' });">rynek pierwotny</label>
+                            <label class="search-tab--promo">
+                                <a href="/legrand_rozgalezniki_przedluzacze" data-url="/legrand_rozgalezniki_przedluzacze" style="display: block !important;">PRZEDŁUŻAJ I ROZGAŁĘZIAJ NA KOLOROWO >></a>
+                            </label>
+
+                                <!-- (c) 2000-2017 Gemius SA version 2.0 Impressions: campaign: Domiporta_13.06.2017_Legrand, placement: /Legrand , creative: Link LEGRAND w wyszukiwarce na listingu  -->
+                                <i id="_gde_isndwl_pmnspldkmr" style="display: none !important; visibility: hidden !important"></i>
+                                <script type="text/javascript">
+                                    (_gdeaq = window._gdeaq || []).push(['hit', 'gazeta', 'nAEwsgRRy1byiSDLnJbFB5aG7MpRLkRlYCULtFApTaT.P7', 'slgmmojfcw', 'agezgrhhsyykwvbddhbtydeyaaku'],
+                                    ['viewable', 'gazeta', 'nAEwsgRRy1byiSDLnJbFB5aG7MpRLkRlYCULtFApTaT.P7', 'pmnspldkmr', '_gde_isndwl_pmnspldkmr']);
+                                </script>
+                                <script type="text/javascript" src="//gazeta.hit.gemius.pl/gdejs/xgde.js"> </script>
+                                <!-- (c) 2000-2017 Gemius SA version 2.0 Clicks clickTag: campaign: Domiporta_13.06.2017_Legrand, placement: /Legrand , creative: Link LEGRAND w wyszukiwarce na listingu  -->
+                            <script>
+                                $(".search-tab--promo a").on("click", function (e) {
+                                    e.preventDefault();
+                                    var url = $(e.target).data("url");
+                                    window.open(url);
+                                })
+                            </script>
+
+                        </div>
+                        <div class="ClearBoth"></div>
+                        <div class="WyszukiwarkaPodstawowa">
+
+
+
+                            <a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?Pietro.From=4" class="FloatLeft PrzelaczanieLista">
+                                <div class="FloatLeft Grafiki PrzelaczanieListaIco"></div>
+                                <div class="FloatLeft PrzelaczanieListaTekst">
+                                    Lista
+                                </div>
+                                <div class="ClearBoth"></div>
+                            </a>
+
+                            <span href="#" class="FloatLeft PrzelaczanieMapa">
+                                <div class="FloatLeft Grafiki PrzelaczanieMapaIco"></div>
+                                <div class="FloatLeft PrzelaczanieMapaTekst">
+                                    Mapa
+                                </div>
+                                <div class="Grafiki Strzalka"></div>
+                                <div class="ClearBoth"></div>
+                            </span>
+
+
+                            <div class="FloatLeft SearchBoxAddidtionalBasicFields">
+                                <div class="FloatLeft Selektor TypNieruchomosci SelectedByDefault">
+                                    <select name="CategoryName" class="TypNieruchomosci" title="Typ nieruchomości">
+                                            <option value="Mieszkanie" selected="selected">Mieszkanie</option>
+                                            <option value="Dom" >Dom</option>
+                                            <option value="Dzialka" >Działka</option>
+                                            <option value="Lokal uzytkowy" >Lokal użytkowy</option>
+                                            <option value="Pokoj" >Pok&#243;j</option>
+                                            <option value="Garaz" >Garaż</option>
+                                        <option value="" >Wszystkie nieruchomości</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                                <div class="FloatLeft Selektor TypOferty SelectedByDefault">
+                                    <select name="AdType" class="TypOferty" title="Typ oferty">
+                                        <option value="Sale" >Na sprzedaż</option>
+                                        <option value="" >Wszystkie transakcje</option>
+                                        <option value="Rent" selected="selected">Na wynajem</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                            </div>
+                            <div class="FloatLeft Lokalizacja">
+                                <div class="InputNowyStyl">
+                                    <label for="Localization">Lokalizacja:</label>
+                                    <input autocorrect="off" class="InputLokalizacja" id="Localization" maxlength="200" name="Localization" placeholder="Wpisz lokalizację, np.: Warszawa, Mokotów, ul. Czerska" spellcheck="false" type="text" value="pomorskie, Gdynia, Witomino" />
+                                    <div class="localization-autocomplete-wrapper"></div>
+                                </div>
+                            </div>
+                            <div class="FloatLeft SearchBoxAddidtionalBasicFields2">
+                                <div class="ClearBoth MapaWyniki"></div>
+                                <div class="WyszukiwarkaRozwinietaMobile DomyslnieUkryta">
+
+                                    <!-- CENA -->
+                                    <div class="FloatLeft WyszukiwarkaElement Cena elementMinToMax clearfix">
+                                        <div class="PodwojnyInputTytul">Cena od - do</div>
+                                        <div class="InputNowyStyl Cena clearfix">
+                                            <div class="FloatLeft PodwojnyInput minimum">
+                                                <input data-val="true" data-val-number="The field From must be a number." id="Price_From" name="Price.From" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Price.From.AutocompleteWrapper fieldUnit "> <span>zł</span></div>
+                                            </div>
+                                            <div class="separator">-</div>
+                                            <div class="FloatLeft PodwojnyInput maximum">
+                                                <input data-val="true" data-val-number="The field To must be a number." id="Price_To" name="Price.To" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Price.To.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                            </div>
+                                            <div class="ClearBoth"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- POWIERZCHNIA -->
+                                    <div class="FloatLeft WyszukiwarkaElement Powierzchnia elementMinToMax clearfix">
+                                        <div class="PodwojnyInputTytul">Powierzchnia od - do</div>
+                                        <div class="InputNowyStyl Powierzchnia clearfix">
+                                            <div class="FloatLeft PodwojnyInput minimum">
+                                                <input data-val="true" data-val-number="The field From must be a number." id="Surface_From" name="Surface.From" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Surface.From.AutocompleteWrapper  fieldUnit"><span>m<sup>2</sup></span></div>
+                                            </div>
+                                            <div class="separator">-</div>
+                                            <div class="FloatLeft PodwojnyInput maximum">
+                                                <input data-val="true" data-val-number="The field To must be a number." id="Surface_To" name="Surface.To" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Surface.To.AutocompleteWrapper  fieldUnit"><span>m<sup>2</sup></span></div>
+                                            </div>
+                                            <div class="ClearBoth"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- LICZBA POKOI -->
+                                    <div class="FloatLeft WyszukiwarkaElement Pokoje elementMinToMax clearfix">
+                                        <div class="PodwojnyInputTytul">Liczba pokoi</div>
+                                        <div class="InputNowyStyl LiczbaPokoi clearfix">
+                                            <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                                <input data-val="true" data-val-number="The field From must be a number." id="Rooms_From" name="Rooms.From" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Rooms.From.AutocompleteWrapper"></div>
+                                            </div>
+                                            <div class="separator">-</div>
+                                            <div class="FloatLeft PodwojnyInput maximum fieldWithoutUnit">
+                                                <input data-val="true" data-val-number="The field To must be a number." id="Rooms_To" name="Rooms.To" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Rooms.To.AutocompleteWrapper"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="FloatLeft WyszukiwarkaElement Przeznaczenie" style="display: none;">
+                                        <div class="PodwojnyInputTytul">Przeznaczenie</div>
+                                        <div class="Selektor Przeznaczenie">
+                                            <select name="Przeznaczenie" class="Przeznaczenie" title="Przeznaczenie">
+                                                <option value="all">Wszystkie</option>
+                                            </select>
+                                            <div class="OptionsWrapper"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="FloatLeft WyszukiwarkaElement Pietro elementMinToMax" style="display: none;">
+                                        <div class="PodwojnyInputTytul">Piętro</div>
+                                        <div class="InputNowyStyl Pietro clearfix">
+                                            <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                                <input data-val="true" data-val-number="The field From must be a number." id="Pietro_From" name="Pietro.From" pattern="[0-9]*" type="text" value="4" />
+                                                <div class="Pietro.From.AutocompleteWrapper"></div>
+                                            </div>
+                                            <div class="separator">-</div>
+                                            <div class="FloatLeft PodwojnyInput maximum fieldWithoutUnit">
+                                                <input data-val="true" data-val-number="The field To must be a number." id="Pietro_To" name="Pietro.To" pattern="[0-9]*" type="text" value="" />
+                                                <div class="Pietro.To.AutocompleteWrapper"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="FloatLeft WyszukiwarkaElement TypDzialki" style="display: none;">
+                                        <div class="PodwojnyInputTytul">Typ działki</div>
+                                        <div class="Selektor TypDzialki">
+                                            <select class="TypDzialki" name="TypDzialki">
+                                                <option value="" selected="selected">Wszystkie</option>
+                                            </select>
+                                            <div class="OptionsWrapper"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CENA ZA METR -->
+                                    <div class="FloatLeft WyszukiwarkaElement CenaZaMetr elementMinToMax" style="display: none;">
+                                        <div class="PodwojnyInputTytul">Cena za m<sup>2</sup> od - do</div>
+                                        <div class="InputNowyStyl CenaZaMetr clearfix">
+                                            <div class="FloatLeft PodwojnyInput minimum">
+                                                <input data-val="true" data-val-number="The field From must be a number." id="PricePerMeter_From" name="PricePerMeter.From" pattern="[0-9]*" type="text" value="" />
+                                                <div class="PricePerMeter.From.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                            </div>
+                                            <div class="separator">-</div>
+                                            <div class="FloatLeft PodwojnyInput maximum">
+                                                <input data-val="true" data-val-number="The field To must be a number." id="PricePerMeter_To" name="PricePerMeter.To" pattern="[0-9]*" type="text" value="" />
+                                                <div class="PricePerMeter.To.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                            </div>
+                                            <div class="ClearBoth"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="FloatLeft ButtonyHP searchModeBtns">
+                                <div class="FloatLeft ButtonHP">
+                                    <input class="Font18px Button Szukaj searchButtonHp" type="submit" name="kuk" value="Szukaj" onclick="searchBoxPushDataLayer(1);" />
+                                    <input class="Font18px Button Szukaj searchButtonList" type="submit" name="kuk" value="" onclick="searchBoxPushDataLayer(1);" />
+                                    <input class="Font18px Button Szukaj searchButtonListMobile" type="submit" name="kuk" value="Szukaj" onclick="searchBoxPushDataLayer(1);" />
+                                </div>
+                                <div class="FloatLeft ButtonHP SzukajNaMapie ShowMapTooltip">
+                                    <input class="Grafiki Button SzukajMapa" type="submit" name="kuk" value=""
+                                           data-action="http://www.domiporta.pl/Search/Szukaj?Map=True&amp;PreventRedirectToRp=True" />
+                                    <div class="MapSearchTooltip" style="opacity: 0;">
+                                        <span class="Grafiki MapSearchStrzalka"></span>
+                                        Szukaj na mapie
+                                    </div>
+                                </div>
+                                <div class="ClearBoth"></div>
+                            </div>
+                            <div class="ClearBoth PrzedPodstawowymiKryteriami"></div>
+                            <div class="FloatLeft WyszukiwarkaElement PodstawoweKryteria">
+                                <div class="FloatLeft">
+                                    <span>Tylko:</span>
+                                </div>
+                                <div class="FloatLeft CheckboxElem">
+                                    <input type="checkbox" class="checkbox" name="OnlyWithPictures" id="OnlyWithPictures" value="true"  />
+                                    <label for="OnlyWithPictures">Oferty ze zdjęciami</label>
+                                </div>
+                                <div class="FloatLeft CheckboxElem">
+                                    <input type="checkbox" class="checkbox" name="OnlyAuctions" id="OnlyAuctions" value="true"  />
+                                    <label for="OnlyAuctions">Przetargi</label>
+                                </div>
+                                <div class="FloatLeft CheckboxElem CheckboxElem--view360" style="display: none;">
+                                    <input type="checkbox" class="checkbox" name="OnlyWithPicture360" id="OnlyWithPicture360" value="true"  />
+                                    <label for="OnlyWithPicture360">Wirtualna wizyta</label>
+                                    <div class="CheckboxElem__tooltip" style="opacity: 0;">
+                                        <span class="CheckBoxElem__tooltip-arrow"></span>
+                                        Wirtualna wizyta w nieruchomości
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    (function () {
+                                        // Show this checkbox only for any browser on Pc except for IE 6-10,
+                                        // which don't support WebGL API - Widok 360 relies on it.
+                                        if (!(document.all && document.compatMode) && $('body').hasClass('Pc')) {
+                                            $('.CheckboxElem--view360').css('display', 'block');
+                                        }
+                                    }());
+                                </script>
+                            </div>
+                            <div class="ClearBoth"></div>
+                        </div>
+                        <div class="ClearBoth MapaWyniki"></div>
+
+                        <div class="FloatLeft Buttony2HP MobileUkryty">
+                            <div class="FloatLeft ButtonHP MobileUkryty">
+                                <input class="Font18px Button Szukaj" type="submit" value="Szukaj" onclick="searchBoxPushDataLayer(1);" />
+                            </div>
+
+                            <div class="FloatLeft ButtonHP SzukajNaMapie MobileUkryty ShowMapTooltip">
+                                <input class="Grafiki Button SzukajMapa" type="submit" name="kuk" value="" data-action="http://www.domiporta.pl/Search/Szukaj?Map=True&amp;PreventRedirectToRp=True" onclick="searchBoxPushDataLayer(2);" />
+                                <div class="MapSearchTooltip" style="opacity: 0;">
+                                    <span class="Grafiki MapSearchStrzalka"></span>
+                                    Szukaj na mapie
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="FloatLeft WyszukiwarkaZaawansowanaMapa">
+                            <a href="#" class="ButtonWyszukiwanieZaawansowane BrakPoprzednichWyszukiwan" onclick="searchBoxPushDataLayer(3);"><span class="MobileDodaj">Wyszukiwarka</span> <span class="StrzalkaZaawansowane"></span></a>
+                            <a href="#" class="ButtonZwinRozwin BrakPoprzednichWyszukiwan" style="display : none;">
+                                <span class="Rozwin" >Wyszukiwarka</span> <span class="ui-icon-triangle-1-s" ></span>
+                                <span class="Zwin" style="display:none;">Zwiń wyszukiwarkę</span> <span class="Grafiki StrzalkaZaawansowane Zwin" style="display:none;"></span>
+                            </a>
+                            <div class="ClearBoth"></div>
+                        </div>
+                    </div>
+                    <div class="back-to-list FloatLeft" style="display: none;">
+                        <a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?Pietro.From=4">
+                            <span></span>
+                            <svg>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/Resources/img/search/sprite.symbol.svg#back-to-list"></use>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="ClearBoth"></div>
+                </div>
+                <!-- WYSZUKIWARKA ZAAWANSOWANA -->
+            <div class="WyszukiwarkaZaawansowanaKontener" style="display: none;">
+                <div class="WyszukiwarkaZaawansowanaHP Rozwinieta">
+                    <div class="FloatLeft SearchBoxAddidtionalBasicFields2" style="display:none;">
+                        <div class="ClearBoth MapaWyniki"></div>
+                        <div class="WyszukiwarkaRozwinietaMobile DomyslnieUkryta">
+
+                            <!-- CENA -->
+                            <div class="FloatLeft WyszukiwarkaElement Cena elementMinToMax clearfix">
+                                <div class="PodwojnyInputTytul">Cena od - do</div>
+                                <div class="InputNowyStyl Cena clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum">
+                                        <input id="Price_From" name="Price.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Price.From.AutocompleteWrapper fieldUnit "> <span>zł</span></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum">
+                                        <input id="Price_To" name="Price.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Price.To.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                    </div>
+                                    <div class="ClearBoth"></div>
+                                </div>
+                            </div>
+
+                            <!-- POWIERZCHNIA -->
+                            <div class="FloatLeft WyszukiwarkaElement Powierzchnia elementMinToMax clearfix">
+                                <div class="PodwojnyInputTytul">Powierzchnia od - do</div>
+                                <div class="InputNowyStyl Powierzchnia clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum">
+                                        <input id="Surface_From" name="Surface.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Surface.From.AutocompleteWrapper  fieldUnit"><span>m<sup>2</sup></span></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum">
+                                        <input id="Surface_To" name="Surface.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Surface.To.AutocompleteWrapper  fieldUnit"><span>m<sup>2</sup></span></div>
+                                    </div>
+                                    <div class="ClearBoth"></div>
+                                </div>
+                            </div>
+
+                            <!-- LICZBA POKOI -->
+                            <div class="FloatLeft WyszukiwarkaElement Pokoje elementMinToMax clearfix" style="display: none;">
+                                <div class="PodwojnyInputTytul">Liczba pokoi</div>
+                                <div class="InputNowyStyl LiczbaPokoi clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                        <input id="Rooms_From" name="Rooms.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Rooms.From.AutocompleteWrapper"></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum fieldWithoutUnit">
+                                        <input id="Rooms_To" name="Rooms.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Rooms.To.AutocompleteWrapper"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CENA ZA METR -->
+                            <div class="FloatLeft WyszukiwarkaElement CenaZaMetr elementMinToMax">
+                                <div class="PodwojnyInputTytul">Cena za m<sup>2</sup> od - do</div>
+                                <div class="InputNowyStyl CenaZaMetr clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum">
+                                        <input id="PricePerMeter_From" name="PricePerMeter.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="PricePerMeter.From.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum">
+                                        <input id="PricePerMeter_To" name="PricePerMeter.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="PricePerMeter.To.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                    </div>
+                                    <div class="ClearBoth"></div>
+                                </div>
+                            </div>
+
+                            <!-- PRZEZNACZENIE -->
+                            <div class="FloatLeft WyszukiwarkaElement Przeznaczenie" style="display: none;">
+                                <div class="PodwojnyInputTytul">Przeznaczenie</div>
+                                <div class="Selektor">
+                                    <select name="Przeznaczenie" class="Przeznaczenie" title="Przeznaczenie">
+                                        <option value="all">Wszystkie</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                            </div>
+
+                            <!-- PIETRO -->
+                            <div class="FloatLeft WyszukiwarkaElement Pietro elementMinToMax">
+                                <div class="PodwojnyInputTytul">Piętro</div>
+                                <div class="InputNowyStyl Pietro clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                        <input id="Pietro_From" name="Pietro.From" pattern="[0-9]*" type="text" value="4" />
+                                        <div class="Pietro.From.AutocompleteWrapper"></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum fieldWithoutUnit">
+                                        <input id="Pietro_To" name="Pietro.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Pietro.To.AutocompleteWrapper"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- TYP DZIALKI -->
+                            <div class="FloatLeft WyszukiwarkaElement TypDzialki">
+                                <div class="PodwojnyInputTytul">Typ działki</div>
+                                <div class="Selektor">
+                                    <select class="TypDzialki" name="TypDzialki">
+                                        <option value="" selected="selected">Wszystkie</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="WyszukiwarkaRozwinietaMobile WyszukiwarkaZaawansowanaStyl">
+                        <div class="FloatLeft ZakladkiMapa Rynek ">
+
+                        </div>
+                        <div class="ClearBoth"></div>
+                        <div class="MapBasicFieldContainer"></div>
+                        <div class="WyszukiwarkaElementMapa">
+                            <div class="FloatLeft WyszukiwarkaElement CenaZaMetr elementMinToMax">
+                                <div class="PodwojnyInputTytul">Cena za m<sup>2</sup> od - do</div>
+                                <div class="InputNowyStyl CenaZaMetr clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum">
+                                        <input id="PricePerMeter_From2" name="PricePerMeter.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="PricePerMeter.From.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum">
+                                        <input id="PricePerMeter_To2" name="PricePerMeter.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="PricePerMeter.To.AutocompleteWrapper fieldUnit"><span>zł</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement PowierzchniaDzialki elementMinToMax">
+                                <div class="PodwojnyInputTytul">Powierzchnia działki</div>
+                                <div class="InputNowyStyl PowierzchniaDzialki clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum">
+                                        <input data-val="true" data-val-number="The field From must be a number." id="PowierzchniaDzialki_From" name="PowierzchniaDzialki.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="PowierzchniaDzialki.From.AutocompleteWrapper"><span>m<sup>2</sup></span></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum">
+                                        <input data-val="true" data-val-number="The field To must be a number." id="PowierzchniaDzialki_To" name="PowierzchniaDzialki.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="PowierzchniaDzialki.To.AutocompleteWrapper"><span>m<sup>2</sup></span></div>
+                                    </div>
+                                    <div class="ClearBoth"></div>
+                                </div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement TerminOddania">
+                                    <div class="PodwojnyInputTytul">Termin oddania</div>
+                                    <div class="InputNowyStyl TerminOddania Selektor">
+                                        <select class="TerminOddania" name="TerminOddania">
+                                            <option value="" selected="selected">Każdy termin</option>
+                                            <option value="0">Oddane do użytkowania</option>
+                                                <option value="4-2017">IV kwartał 2017</option>
+                                                <option value="1-2018">I kwartał 2018</option>
+                                                <option value="2-2018">II kwartał 2018</option>
+                                                <option value="3-2018">III kwartał 2018</option>
+                                                <option value="4-2018">IV kwartał 2018</option>
+                                                <option value="1-2019">I kwartał 2019</option>
+                                                <option value="2-2019">II kwartał 2019</option>
+                                                <option value="3-2019">III kwartał 2019</option>
+                                                <option value="4-2019">IV kwartał 2019</option>
+                                                <option value="1-2020">I kwartał 2020</option>
+                                        </select>
+                                        <div class="OptionsWrapper"></div>
+                                    </div>
+                                    <div class="ClearBoth"></div>
+                                </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Pietro elementMinToMax otherMarginDev">
+                                <div class="PodwojnyInputTytul">Piętro</div>
+                                <div class="InputNowyStyl Pietro clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                        <input id="Pietro_From2" name="Pietro.From" pattern="[0-9]*" type="text" value="4" />
+                                        <div class="Pietro.From.AutocompleteWrapper"></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput  maximum fieldWithoutUnit">
+                                        <input id="Pietro_To2" name="Pietro.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="Pietro.To.AutocompleteWrapper"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Kuchnia otherMargin">
+                                <div class="PodwojnyInputTytul">Kuchnia</div>
+                                <div class="InputNowyStyl Selektor">
+                                    <select class="Kuchnia" name="Kuchnia">
+                                        <option value="" selected="selected">Wszystkie</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                            </div>
+
+                            <div class="ClearBoth"></div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Pieter elementMinToMax">
+                                <div class="PodwojnyInputTytul">Pięter w budynku</div>
+                                <div class="InputNowyStyl Pieter clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                        <input data-val="true" data-val-number="The field From must be a number." id="LiczbaPieter_From" name="LiczbaPieter.From" pattern="[0-9]*" type="text" value="" />
+                                        <div class="LiczbaPieter.From.AutocompleteWrapper"></div>
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum fieldWithoutUnit">
+                                        <input data-val="true" data-val-number="The field To must be a number." id="LiczbaPieter_To" name="LiczbaPieter.To" pattern="[0-9]*" type="text" value="" />
+                                        <div class="LiczbaPieter.Tp.AutocompleteWrapper"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Rok elementMinToMax">
+                                <div class="PodwojnyInputTytul">Rok budowy</div>
+                                <div class="InputNowyStyl Rok clearfix">
+                                    <div class="FloatLeft PodwojnyInput minimum fieldWithoutUnit">
+                                        <input data-val="true" data-val-number="The field From must be a number." id="RokBudowy_From" name="RokBudowy.From" pattern="[0-9]*" type="text" value="" />
+                                    </div>
+                                    <div class="separator">-</div>
+                                    <div class="FloatLeft PodwojnyInput maximum fieldWithoutUnit">
+                                        <input data-val="true" data-val-number="The field To must be a number." id="RokBudowy_To" name="RokBudowy.To" pattern="[0-9]*" type="text" value="" />
+                                    </div>
+                                    <div class="ClearBoth"></div>
+                                </div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Material otherMargin">
+                                <div class="PodwojnyInputTytul">Materiał</div>
+                                <div class="InputNowyStyl Material Selektor">
+                                    <select class="Material" name="Material">
+                                        <option value="" selected="selected">Wszystkie</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                            </div>
+                            <div class="ClearBoth"></div>
+                            <div class="FloatLeft WyszukiwarkaElement DrogaDojazdowa">
+                                <div class="PodwojnyInputTytul">Droga dojazdowa</div>
+                                <div class="InputNowyStyl DrogaDojazdowa Selektor">
+                                    <select class="DrogaDojazdowa" name="DrogaDojazdowa">
+                                        <option value="" selected="selected">Wszystkie</option>
+                                    </select>
+                                    <div class="OptionsWrapper"></div>
+                                </div>
+                                <div class="ClearBoth"></div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Media">
+                                <div class="PodwojnyInputTytul notCenteredTitle">Media:</div>
+                                <div class="CheckboxSet Media clearfix">
+                                </div>
+                            </div>
+
+                            <div class="FloatLeft WyszukiwarkaElement Kanalizacja">
+                                <div class="PodwojnyInputTytul">Kanalizacja:</div>
+                                <div class="CheckboxSet Kanalizacja clearfix">
+                                </div>
+                            </div>
+
+                            <div class="ClearBoth"></div>
+
+                            <div class="WyszukiwarkaElementSekcja additionalFieldsSection clearfix">
+                                <div class="FloatLeft WyszukiwarkaElement CzasDodania">
+                                    <div class="PodwojnyInputTytul">Czas dodania ogłoszenia</div>
+                                    <div class="InputNowyStyl Selektor">
+                                        <select class="CzasDodania" name="InsertionDateRange" title="Czas dodania">
+                                            <option value="">Dowolny</option>
+                                            <option value="Today" >Dziś</option>
+                                            <option value="Yesterday" >Od wczoraj</option>
+                                            <option value="Last7Days" >Ostatnie 7 dni</option>
+                                            <option value="Last14Days" >Ostatnie 14 dni</option>
+                                            <option value="LastMonth" >Ostatni miesiąc</option>
+                                        </select>
+                                        <div class="OptionsWrapper"></div>
+                                    </div>
+                                </div>
+
+                                <div class="FloatLeft WyszukiwarkaElement TypOgloszeniodawcy">
+                                    <div class="PodwojnyInputTytul">Typ ogłoszeniodawcy</div>
+                                    <div class="InputNowyStyl Selektor Rodzaj">
+                                        <select name="Rodzaj" class="Rodzaj" title="Rodzaj ogłoszenia">
+                                            <option value="" selected=&quot;selected&quot;>Wszyscy</option>
+                                            <option value="Deweloperskie" >Deweloper</option>
+                                            <option value="Agencyjne" >Agencja</option>
+                                            <option value="Bezposrednie" >Bezpośredni</option>
+                                        </select>
+                                        <div class="OptionsWrapper"></div>
+                                    </div>
+                                </div>
+
+                                <div class="FloatLeft WyszukiwarkaElement NrOferty">
+                                    <div class="PodwojnyInputTytul clearfix">
+                                        Numer oferty
+                                        <a href="#" class="NrOfertyWlaczTooltip" onclick="return false;">
+                                            <span class="questionMark">?</span>
+                                            <div class="NrOfertyTooltip" style="display : none;">
+                                                Unikalny numer identyfikacyjny nadawany ofercie przez agencję nieruchomości.
+                                                <span class="Grafiki TooltipStrzalkaBok"></span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="InputNowyStyl NrOferty">
+                                        <input class="NrOferty" id="NumerOferty" name="NumerOferty" placeholder="" type="text" value="" />
+                                    </div>
+                                </div>
+
+                                <div class="FloatLeft WyszukiwarkaElement SzukajSlow">
+                                    <div class="PodwojnyInputTytul">Szukaj słów kluczowych</div>
+                                    <div class="InputNowyStyl SzukajSlow">
+                                        <div class="PodwojnyInput">
+                                            <input class="SzukajSlow" id="KeyWords" name="KeyWords" placeholder="" type="text" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bottomAdvancedSearch clearfix">
+                                <div class="WyszukiwarkaElement SeparateCheckboxes clearfix">
+                                    <div class="PodwojnyInputTytul">Szukaj tylko ogłoszeń:</div>
+                                    <div class="ZaawansowanaCheckbox clearfix">
+
+                                        <div class="FloatLeft CheckboxElem">
+                                            <input type="checkbox" class="checkbox" name="OnlyWithVideo" id="OnlyWithVideo" value="true"  />
+                                            <label for="OnlyWithVideo">z wideo</label>
+                                        </div>
+                                        <div class="FloatLeft CheckboxElem">
+                                            <input type="checkbox" class="checkbox" name="OnlyGeoCoded" id="OnlyGeoCoded" value="true"  />
+                                            <label for="OnlyGeoCoded">z geolokalizacją</label>
+                                        </div>
+                                        <div class="FloatLeft CheckboxElem">
+                                            <input type="checkbox" class="checkbox" name="OnlyExclusive" id="OnlyExclusive" value="true"  />
+                                            <label for="OnlyExclusive">na wyłączność</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="advancedSearchButtons clearfix">
+                                    <div class="FloatLeft ButtonHP">
+                                        <input class="Font18px Button mobileHidden Szukaj" type="submit" value="Szukaj" onclick="searchBoxPushDataLayer(1);" /><a href="#" class="Font16px Button SzukajMobile" onclick="searchBoxPushDataLayer(1);">Szukaj</a>
+                                        <input class="Font18px Button mobileShown Szukaj" type="submit" value="" onclick="searchBoxPushDataLayer(1);" /><a href="#" class="Font16px Button SzukajMobile" onclick="searchBoxPushDataLayer(1);"></a>
+                                    </div>
+                                    <div class="FloatLeft ButtonHP SzukajNaMapie ShowMapTooltip">
+                                        <input class="Grafiki Button SzukajMapa" type="submit" name="kuk" value="" data-action="http://www.domiporta.pl/Search/Szukaj?Map=True&amp;PreventRedirectToRp=True" onclick="searchBoxPushDataLayer(2);" />
+                                        <div class="MapSearchTooltip" style="opacity: 0;">
+                                            <span class="Grafiki MapSearchStrzalka"></span>
+                                            Szukaj na mapie
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <!-- TWOJE OSTATNIE WYSZUKIWANIA -->
+            <div class="OstatnioWyszukiwaneKontener" style="display: none;" onclick="searchBoxPushDataLayer(5);"></div>
+                <!-- KONIEC-->
+            <div class="TextalignCenter Font12px AkcjeWyszukiwarki clearfix">
+                <div class="searchActionsContent clearfix">
+                    <div class="FloatLeft TwojeWyszukiwaniaPrzycisk ui-state-default">
+                        <span class="StrzalkaZaawansowane lastSearchExtend">
+                            <span onclick="searchBoxPushDataLayer(4);">Twoje wyszukiwania</span>
+                        </span>
+                    </div>
+                    <div class="advancedSearch">
+                        <span class="ButtonWyszukiwanieZaawansowane BrakPoprzednichWyszukiwan StrzalkaZaawansowane">
+                            <span onclick="searchBoxPushDataLayer(3); Monitor.TrackWebEvent('WyszukiwanieZaawansowane');">Wyszukiwanie zaawansowane</span>
+                        </span>
+                    </div>
+                    <a href="#" class="ButtonZwinRozwin BrakPoprzednichWyszukiwan">
+
+
+                        <span class="Rozwin">Więcej opcji wyszukiwania</span> <span class="Grafiki StrzalkaZaawansowane Rozwin"></span>
+                        <span class="Zwin" style="display:none;">Mniej opcji wyszukiwania</span> <span class="Grafiki StrzalkaZaawansowane Zwin" style="display:none;"></span>
+                    </a>
+                </div>
+            </div>
+                <!-- KONIEC-->
+</form>    </div>
+</section>
+<div class="showSearchMobile"><span>pokaż wyszukiwarkę</span><span></span></div>
+
+
+                    <div class="adviewDFPBanner DFP-001-TOPBOARD" id="001-TOPBOARD"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-001-TOPBOARD"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-001-TOPBOARD'); });</script></div></div>
+
+
+<section id="KryteriaLista">
+    <div class="TextalignCenter Kryteria"><div class="KryteriaStyl"><div class="FloatLeft Font12px KryteriaElement">
+			<div class="FloatLeft KryteriaTekst1">
+				Piętro:
+			</div>
+			<div class="FloatLeft KryteriaTekst2">
+				od 4.
+			</div>
+		<div class="FloatLeft Grafiki KryteriaUsun"><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino"></a></div>
+		<div class="ClearBoth"></div>
+	</div><div class="ClearBoth"></div><a href="#" id="ClearTags" class="WyczyscKryteria"><span class="WyczyscTekst">Wyczyść</span> <span class="Grafiki IcoWyczysc"></span></a></div></div>
+</section>
+
+
+
+                </section>
+
+                <section id="WynikiWyszukiwania">
+                    <div class="search-results-container ">
+
+
+
+    <div class="PrzelaczanieMapaLista">
+        <span class="FloatLeft PrzelaczanieLista">
+            <div class="FloatLeft Grafiki PrzelaczanieListaIco"></div>
+            <div class="FloatLeft PrzelaczanieListaTekst">
+                Lista
+            </div>
+            <div class="Grafiki Strzalka"></div>
+            <div class="ClearBoth"></div>
+        </span>
+
+        <a href="http://www.domiporta.pl/mieszkania/wynajem?Localization=pomorskie%2C%20Gdynia%2C%20Witomino&amp;Pietro.From=4&amp;LocalizationId=69913&amp;Map=True" class="FloatLeft PrzelaczanieMapa">
+            <div class="FloatLeft Grafiki sprite sprite--map-pin"></div>
+            <div class="FloatLeft PrzelaczanieMapaTekst" id="listing-rw-zobacz-na-mapie">
+                Zobacz na mapie
+            </div>
+            <div class="ClearBoth"></div>
+        </a>
+
+            <ol class="ListFooterBreadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
+
+<li itemscope itemprop="itemListElement" itemtype="https://schema.org/ListItem">
+<a href="http://www.domiporta.pl/mieszkania/wszystkie" itemprop="item"><span itemprop="name">Mieszkania</span></a>
+<meta itemprop="position" content="1" />
+</li>
+  &#155;
+<li itemscope itemprop="itemListElement" itemtype="https://schema.org/ListItem">
+<a href="http://www.domiporta.pl/mieszkanie/wynajme" itemprop="item"><span itemprop="name">mieszkania do wynajęcia</span></a>
+<meta itemprop="position" content="2" />
+</li>
+  &#155;
+<li itemscope itemprop="itemListElement" itemtype="https://schema.org/ListItem">
+<a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie" itemprop="item"><span itemprop="name">pomorskie</span></a>
+<meta itemprop="position" content="3" />
+</li>
+  &#155;
+<li itemscope itemprop="itemListElement" itemtype="https://schema.org/ListItem">
+<a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia" itemprop="item"><span itemprop="name">Gdynia</span></a>
+<meta itemprop="position" content="4" />
+</li>
+  &#155; <span>Witomino</span>
+            </ol>
+        <div class="ClearBoth"></div>
+    </div>
+
+
+
+
+                        <div class="WynikiKontent">
+                            <div class="adviewDFPBanner DFP-056-NAVIBOARD" id="056-NAVIBOARD"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-056-NAVIBOARD"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-056-NAVIBOARD'); });</script></div></div>
+
+
+
+<div class="WynikiListaTytul">
+
+	<div class="TytulTekst TytulLokalizacji">
+		<h1>Mieszkania na wynajem: <b>Witomino - Gdynia</b></h1>
+            <h2 title="Znaleziono    4  ogłoszenia" alt="Znaleziono    4  ogłoszenia" class="PodzielKolumn2 AlignRight ZnalezionoXOgloszen">
+                Znaleziono <span>   4 </span> ogłoszenia
+            </h2>
+	</div>
+
+        <div class="ShowOtherLocalization PodzielKolumn2 AlignLeft CzyInnaLokalizacja"></div>
+        <div class="ClearBoth"></div>
+</div>                            <div class="TextalignLeft FloatLeft WynikiLista">
+<div class="WynikiListaWyroznione">
+	<!-- FIXME - we should render something here like a loader or something -->
+</div>
+<script>
+    emitter.emit('elementLoaded', {
+        element: 'adpremium'
+    });
+</script>
+
+<div class="WynikiListaStandard">
+        <div class="WynikiListaTytul">
+<form action="/Search/szukaj?Localization=pomorskie%2C%20Gdynia%2C%20Witomino&amp;Pietro.From=4&amp;AdType=wynajme&amp;CategoryName=mieszkanie&amp;Map=False" method="post">                <div class="listing-settings listing-settings--top">
+                    <div>
+                        <div class="sorting">
+                            <span>Sortowanie</span>
+                            <select name="SortingCustomOrder" onchange="Monitor.TrackWebEvent('Sortowanie', 'SortDirection=' + this.value + '&transaction=rent&category=flat');">
+                                <option value="SortDateDescending" selected=&quot;selected&quot;>
+                                    Domyślne
+                                </option>
+                                <option value="InsertionDateDescending" >
+                                    Od najnowszych
+                                </option>
+                                <option value="InsertionDateAscending" >
+                                    Od najstarszych
+                                </option>
+                                <option value="PriceDescending" >
+                                    Od najwyższej ceny
+                                </option>
+                                <option value="PriceAscending" >
+                                    Od najniższej ceny
+                                </option>
+                                <option value="SurfaceDescending" >
+                                    Od największej powierzchni
+                                </option>
+                                <option value="SurfaceAscending" >
+                                    Od najmniejszej powierzchni
+                                </option>
+                            </select>
+                        </div>
+
+
+
+<div class="pagination">
+    <ul>
+        <li>
+            <input type="text" value="1" min="1" max="1" class="pagination__input">
+        </li>
+        <li class="pagination__separator">
+            z
+        </li>
+        <li>
+            <a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?Pietro.From=4">1</a>
+        </li>
+    </ul>
+</div>
+
+                    </div>
+
+
+
+<div>
+    <div class="cards-per-page">
+        <ul>
+            <li>Ilość wyników na liście: <span><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?Pietro.From=4&RowsPerPage=10">10</a> <span class="Separator">|</span> <a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?Pietro.From=4&RowsPerPage=20">20</a> <span class="Separator">|</span> <span class='current'>40</span> <span class="Separator">|</span> <a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?Pietro.From=4&RowsPerPage=60">60</a></span></li>
+        </ul>
+    </div>
+</div>
+                </div>
+</form>        </div>
+<div class="adviewDFPBanner DFP-050-SHORTBOX-A" id="050-SHORTBOX-A"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-050-SHORTBOX-A"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-050-SHORTBOX-A'); });</script></div></div>
+
+<div class="detail-card WynikiListaStandard   NoweWyniki" data-detail-id="147909122">
+    <a title="mieszkanie Gdynia Witomino 47m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-pck-47m2/147909122?clicksource=standard"
+         onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147909122']);"       >
+        <div class="detail-card__photo WynikiListaZdjecie ">
+            <img alt="wynajmę mieszkanie Gdynia Witomino" title="wynajmę mieszkanie Gdynia Witomino" src="http://galeria.domiporta.pl/pictures/11/81/64/6481a87b9e0d41b08969110a09e43b8201c27c68/wynajme-mieszkanie-gdynia-witomino.jpg" onerror="this.parentNode.classList.add('placeholder-picture--broken');" />
+            <span class="placeholder-message"></span>
+            <div class="detail-card__properties" data-toggle-popup>
+                <div class="detail-card__properties--top">
+                    <div data-href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-pck-47m2/147909122" data-rel="147909122" class="Ulubione detail-card__watch" title="Dodaj do obserwowanych"
+                    onclick="Monitor.TrackWebEvent('DodajDoObserwowanych', 'ylProducts=147909122&transaction=rent&category=flat');"  >
+                    <span id="listing-rw-dodaj-do-obserwowanych" class="detail-card__watch-button detail-card__watch-button--add"></span>
+                    <p class="detail-card__watch-text">Dodaj do obserwowanych</p>
+                    </div>
+                    <div class="detail-card__media">
+                            <div class="detail-card__prop--photos">
+                                <svg>
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/Resources/img/search/sprite.symbol.svg#photo"></use>
+                                </svg>
+                                <span>12</span>
+                            </div>
+                                            </div>
+                </div>
+                <div class="detail-card__properties--bottom">
+                    <span class="detail-card__prop--seen">Obejrzane</span>
+                </div>
+            </div>
+        </div>
+        <div class="detail-card__info">
+            <div class="detail-card__heading">
+                <div>
+                    <h4 class="detail-card__title">
+                        Mieszkanie Gdynia, Witomino, PCK
+                    </h4>
+                            <p class="detail-card__price">
+                                1&#160;500 zł
+                                <span class="detail-card__price-per-meter">
+                                    31,91 zł/m<sup>2</sup>
+                                </span>
+                            </p>
+
+                </div>
+            </div>
+            <div class="detail-card__details" itemscope itemtype="http://schema.org/SingleFamilyResidence">
+                <div class="detail-card__area">
+                        <span>Powierzchnia:</span>
+                        <p>
+                            <strong>47</strong> m<sup>2</sup>
+                        </p>
+
+                </div>
+                        <div class="detail-card__floor">
+                            <span>Piętro:</span>
+                            <p>
+                                <strong>4</strong>
+                                <span>/10</span>
+                            </p>
+                        </div>
+                    <div class="detail-card__rooms">
+                        <span>Liczba pokoi:</span>
+                        <p>
+                            <strong itemprop="numberOfRooms">3</strong>
+                        </p>
+                    </div>
+
+                <span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+                    <meta itemprop="addressLocality" content="Gdynia" />
+                    <meta itemprop="addressRegion" content="Pomorskie" />
+                    <meta itemprop="streetAddress" content="PCK" />
+                </span>
+
+                    <span itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+                        <meta itemprop="latitude" content="54,498381" />
+                        <meta itemprop="longitude" content="18,514264" />
+                    </span>
+            </div>
+            <div class="detail-card__footer">
+                <div class="detail-card__subtitle">
+                    <h5>
+                        Mieszkanie na wynajem
+                    </h5>
+
+
+
+
+
+                        <span>Standard</span>
+
+                    <span>Dodane 09-11-2017</span>
+                </div>
+                <div class="detail-card__attributes">
+                        <span class="detail-card__exclusive" title="Oferta na wyłączność">
+                            <svg>
+                                <use xlink:href="/Resources/img/search/sprite.symbol.svg#exclusive"></use>
+                            </svg>
+                        </span>
+                                                        </div>
+            </div>
+        </div>
+    </a>
+
+
+<div class="detail-card__popup">
+    <span class="detail-popup__arrow"></span>
+    <section class="detail-popup__details">
+        <div class="detail-popup__heading">
+            <h4>
+                <a title="mieszkanie Gdynia Witomino 47m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-pck-47m2/147909122?clicksource=standard"
+                     onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147909122']);"     >
+                    Gdynia, Witomino, PCK
+                </a>
+            </h4>
+            <a href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-pck-47m2/147909122?clicksource=standard#Detale" class="detail-popup__button--contact dp-button" id="listing-rw-podglad-ogloszenia-kontakt">
+                Kontakt
+            </a>
+        </div>
+        <div class="detail-popup__desc">
+            <p>
+
+
+Mieszkanie słoneczne 3 pokojowe (47m2), na IV piętrze w wieżowcu, odrębna kuchnia, balkon. Mieszkanie po generalnym remoncie, na podłogach cyklinowany parkiet, w kuchni terakota. Na ścianach tapety w pokojach i przedpokoju. W łazience kafelki, nowe sanitariaty, wanna, toaleta, umywalka. W przedpo...            </p>
+        </div>
+    </section>
+</div>
+
+</div>
+
+<div class="detail-card WynikiListaStandard   NoweWyniki" data-detail-id="147817033">
+    <a title="mieszkanie Gdynia Witomino Leśnicz&#243;wka 60m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-lesniczowka-niska-60m2/147817033?clicksource=standard"
+         onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147817033']);"       >
+        <div class="detail-card__photo WynikiListaZdjecie ">
+            <img alt="wynajmę mieszkanie Gdynia Witomino Leśnicz&#243;wka" title="wynajmę mieszkanie Gdynia Witomino Leśnicz&#243;wka" src="http://galeria.domiporta.pl/pictures/14/d9/ea/ead9d58667244d66354886be5ed0f8a311c070ff/wynajme-mieszkanie-gdynia-witomino_lesniczowka.jpg" onerror="this.parentNode.classList.add('placeholder-picture--broken');" />
+            <span class="placeholder-message"></span>
+            <div class="detail-card__properties" data-toggle-popup>
+                <div class="detail-card__properties--top">
+                    <div data-href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-lesniczowka-niska-60m2/147817033" data-rel="147817033" class="Ulubione detail-card__watch" title="Dodaj do obserwowanych"
+                    onclick="Monitor.TrackWebEvent('DodajDoObserwowanych', 'ylProducts=147817033&transaction=rent&category=flat');"  >
+                    <span id="listing-rw-dodaj-do-obserwowanych" class="detail-card__watch-button detail-card__watch-button--add"></span>
+                    <p class="detail-card__watch-text">Dodaj do obserwowanych</p>
+                    </div>
+                    <div class="detail-card__media">
+                            <div class="detail-card__prop--photos">
+                                <svg>
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/Resources/img/search/sprite.symbol.svg#photo"></use>
+                                </svg>
+                                <span>12</span>
+                            </div>
+                                            </div>
+                </div>
+                <div class="detail-card__properties--bottom">
+                    <span class="detail-card__prop--seen">Obejrzane</span>
+                </div>
+            </div>
+        </div>
+        <div class="detail-card__info">
+            <div class="detail-card__heading">
+                <div>
+                    <h4 class="detail-card__title">
+                        Mieszkanie Gdynia, Witomino Leśnicz&#243;wka, NISKA
+                    </h4>
+                            <p class="detail-card__price">
+                                1&#160;900 zł
+                                <span class="detail-card__price-per-meter">
+                                    31,47 zł/m<sup>2</sup>
+                                </span>
+                            </p>
+
+                </div>
+            </div>
+            <div class="detail-card__details" itemscope itemtype="http://schema.org/SingleFamilyResidence">
+                <div class="detail-card__area">
+                        <span>Powierzchnia:</span>
+                        <p>
+                            <strong>60,38</strong> m<sup>2</sup>
+                        </p>
+
+                </div>
+                        <div class="detail-card__floor">
+                            <span>Piętro:</span>
+                            <p>
+                                <strong>9</strong>
+                                <span>/13</span>
+                            </p>
+                        </div>
+                    <div class="detail-card__rooms">
+                        <span>Liczba pokoi:</span>
+                        <p>
+                            <strong itemprop="numberOfRooms">3</strong>
+                        </p>
+                    </div>
+
+                <span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+                    <meta itemprop="addressLocality" content="Gdynia" />
+                    <meta itemprop="addressRegion" content="Pomorskie" />
+                    <meta itemprop="streetAddress" content="NISKA" />
+                </span>
+
+                    <span itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+                        <meta itemprop="latitude" content="54,4963835" />
+                        <meta itemprop="longitude" content="18,5071226" />
+                    </span>
+            </div>
+            <div class="detail-card__footer">
+                <div class="detail-card__subtitle">
+                    <h5>
+                        Mieszkanie na wynajem
+                    </h5>
+
+
+
+
+
+                        <span>Standard</span>
+
+                    <span>Starsze niż 14 dni</span>
+                </div>
+                <div class="detail-card__attributes">
+                        <span class="detail-card__exclusive" title="Oferta na wyłączność">
+                            <svg>
+                                <use xlink:href="/Resources/img/search/sprite.symbol.svg#exclusive"></use>
+                            </svg>
+                        </span>
+                                                        </div>
+            </div>
+        </div>
+    </a>
+
+
+<div class="detail-card__popup">
+    <span class="detail-popup__arrow"></span>
+    <section class="detail-popup__details">
+        <div class="detail-popup__heading">
+            <h4>
+                <a title="mieszkanie Gdynia Witomino Leśnicz&#243;wka 60m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-lesniczowka-niska-60m2/147817033?clicksource=standard"
+                     onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147817033']);"     >
+                    Gdynia, Witomino Leśnicz&#243;wka, NISKA
+                </a>
+            </h4>
+            <a href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-trzypokojowe-gdynia-witomino-lesniczowka-niska-60m2/147817033?clicksource=standard#Detale" class="detail-popup__button--contact dp-button" id="listing-rw-podglad-ogloszenia-kontakt">
+                Kontakt
+            </a>
+        </div>
+        <div class="detail-popup__desc">
+            <p>
+
+
+Śliczne mieszkanie w prestiżowym budynku - WITAWA
+
+Opis mieszkania:
+
+Mieszkanie o powierzchni60 m2 składające się z pokoju połączonego z aneksem kuchennym, 2 sypialni, łazienki, wc oraz przedpokoju.
+
+Pok&#243;j dzienny z taflą panoramicznych okien, z kt&#243;rych rozpościera się piękny widok na z...            </p>
+        </div>
+    </section>
+</div>
+
+</div>
+
+<div class="detail-card WynikiListaStandard   NoweWyniki" data-detail-id="147742479">
+    <a title="mieszkanie Gdynia Witomino Leśnicz&#243;wka 30m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-lesniczowka-wielkokacka-30m2/147742479?clicksource=standard"
+         onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147742479']);"       >
+        <div class="detail-card__photo WynikiListaZdjecie ">
+            <img alt="wynajmę mieszkanie Gdynia Witomino Leśnicz&#243;wka" title="wynajmę mieszkanie Gdynia Witomino Leśnicz&#243;wka" src="http://galeria.domiporta.pl/pictures/12/92/0b/0b9229a3482e2890288074cbb7950cf718bafab2/wynajme-mieszkanie-gdynia-witomino_lesniczowka.jpg" onerror="this.parentNode.classList.add('placeholder-picture--broken');" />
+            <span class="placeholder-message"></span>
+            <div class="detail-card__properties" data-toggle-popup>
+                <div class="detail-card__properties--top">
+                    <div data-href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-lesniczowka-wielkokacka-30m2/147742479" data-rel="147742479" class="Ulubione detail-card__watch" title="Dodaj do obserwowanych"
+                    onclick="Monitor.TrackWebEvent('DodajDoObserwowanych', 'ylProducts=147742479&transaction=rent&category=flat');"  >
+                    <span id="listing-rw-dodaj-do-obserwowanych" class="detail-card__watch-button detail-card__watch-button--add"></span>
+                    <p class="detail-card__watch-text">Dodaj do obserwowanych</p>
+                    </div>
+                    <div class="detail-card__media">
+                            <div class="detail-card__prop--photos">
+                                <svg>
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/Resources/img/search/sprite.symbol.svg#photo"></use>
+                                </svg>
+                                <span>12</span>
+                            </div>
+                                            </div>
+                </div>
+                <div class="detail-card__properties--bottom">
+                    <span class="detail-card__prop--seen">Obejrzane</span>
+                </div>
+            </div>
+        </div>
+        <div class="detail-card__info">
+            <div class="detail-card__heading">
+                <div>
+                    <h4 class="detail-card__title">
+                        Mieszkanie Gdynia, Witomino Leśnicz&#243;wka, WIELKOKACKA
+                    </h4>
+                            <p class="detail-card__price">
+                                1&#160;400 zł
+                                <span class="detail-card__price-per-meter">
+                                    46,67 zł/m<sup>2</sup>
+                                </span>
+                            </p>
+
+                </div>
+            </div>
+            <div class="detail-card__details" itemscope itemtype="http://schema.org/SingleFamilyResidence">
+                <div class="detail-card__area">
+                        <span>Powierzchnia:</span>
+                        <p>
+                            <strong>30</strong> m<sup>2</sup>
+                        </p>
+
+                </div>
+                        <div class="detail-card__floor">
+                            <span>Piętro:</span>
+                            <p>
+                                <strong>4</strong>
+                                <span>/12</span>
+                            </p>
+                        </div>
+                    <div class="detail-card__rooms">
+                        <span>Liczba pokoi:</span>
+                        <p>
+                            <strong itemprop="numberOfRooms">2</strong>
+                        </p>
+                    </div>
+
+                <span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+                    <meta itemprop="addressLocality" content="Gdynia" />
+                    <meta itemprop="addressRegion" content="Pomorskie" />
+                    <meta itemprop="streetAddress" content="WIELKOKACKA" />
+                </span>
+
+                    <span itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+                        <meta itemprop="latitude" content="54,4981353" />
+                        <meta itemprop="longitude" content="18,5096813" />
+                    </span>
+            </div>
+            <div class="detail-card__footer">
+                <div class="detail-card__subtitle">
+                    <h5>
+                        Mieszkanie na wynajem
+                    </h5>
+
+
+
+
+
+                        <span>Standard</span>
+
+                    <span>Starsze niż 14 dni</span>
+                </div>
+                <div class="detail-card__attributes">
+                        <span class="detail-card__exclusive" title="Oferta na wyłączność">
+                            <svg>
+                                <use xlink:href="/Resources/img/search/sprite.symbol.svg#exclusive"></use>
+                            </svg>
+                        </span>
+                                                        </div>
+            </div>
+        </div>
+    </a>
+
+
+<div class="detail-card__popup">
+    <span class="detail-popup__arrow"></span>
+    <section class="detail-popup__details">
+        <div class="detail-popup__heading">
+            <h4>
+                <a title="mieszkanie Gdynia Witomino Leśnicz&#243;wka 30m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-lesniczowka-wielkokacka-30m2/147742479?clicksource=standard"
+                     onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147742479']);"     >
+                    Gdynia, Witomino Leśnicz&#243;wka, WIELKOKACKA
+                </a>
+            </h4>
+            <a href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-lesniczowka-wielkokacka-30m2/147742479?clicksource=standard#Detale" class="detail-popup__button--contact dp-button" id="listing-rw-podglad-ogloszenia-kontakt">
+                Kontakt
+            </a>
+        </div>
+        <div class="detail-popup__desc">
+            <p>
+
+
+Do wynajęcia całkowicie umeblowane i wyposażone mieszkanie przy ul.Wielkokackiej w Gdyni.
+
+Mieszkanie składa się z saloniku oraz sypialni; kuchnia w aneksie; mieszkanie z tarasem i pięknym widokiem na zatokę; wyposażone jak na zdjęciach (pralka, lod&#243;wka, tv, umeblowanie, szafa typu KOMANDOR)...            </p>
+        </div>
+    </section>
+</div>
+
+</div><div class="adviewDFPBanner DFP-050-SHORTBOX-B" id="050-SHORTBOX-B"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-050-SHORTBOX-B"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-050-SHORTBOX-B'); });</script></div></div>
+
+<div class="detail-card WynikiListaStandard   NoweWyniki" data-detail-id="147352554">
+    <a title="mieszkanie Gdynia Witomino 38m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-narcyzowa-38m2/147352554?clicksource=standard"
+         onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147352554']);"       >
+        <div class="detail-card__photo WynikiListaZdjecie ">
+            <img alt="wynajmę mieszkanie Gdynia Witomino" title="wynajmę mieszkanie Gdynia Witomino" src="http://galeria.domiporta.pl/pictures/14/28/bc/bc28dfea1892ace1b4548b0812c38a1731c85d37/wynajme-mieszkanie-gdynia-witomino.jpg" onerror="this.parentNode.classList.add('placeholder-picture--broken');" />
+            <span class="placeholder-message"></span>
+            <div class="detail-card__properties" data-toggle-popup>
+                <div class="detail-card__properties--top">
+                    <div data-href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-narcyzowa-38m2/147352554" data-rel="147352554" class="Ulubione detail-card__watch" title="Dodaj do obserwowanych"
+                    onclick="Monitor.TrackWebEvent('DodajDoObserwowanych', 'ylProducts=147352554&transaction=rent&category=flat');"  >
+                    <span id="listing-rw-dodaj-do-obserwowanych" class="detail-card__watch-button detail-card__watch-button--add"></span>
+                    <p class="detail-card__watch-text">Dodaj do obserwowanych</p>
+                    </div>
+                    <div class="detail-card__media">
+                            <div class="detail-card__prop--photos">
+                                <svg>
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/Resources/img/search/sprite.symbol.svg#photo"></use>
+                                </svg>
+                                <span>10</span>
+                            </div>
+                                            </div>
+                </div>
+                <div class="detail-card__properties--bottom">
+                    <span class="detail-card__prop--seen">Obejrzane</span>
+                </div>
+            </div>
+        </div>
+        <div class="detail-card__info">
+            <div class="detail-card__heading">
+                <div>
+                    <h4 class="detail-card__title">
+                        Mieszkanie Gdynia, Witomino, Narcyzowa
+                    </h4>
+                            <p class="detail-card__price">
+                                1&#160;250 zł
+                                <span class="detail-card__price-per-meter">
+                                    32,89 zł/m<sup>2</sup>
+                                </span>
+                            </p>
+
+                </div>
+            </div>
+            <div class="detail-card__details" itemscope itemtype="http://schema.org/SingleFamilyResidence">
+                <div class="detail-card__area">
+                        <span>Powierzchnia:</span>
+                        <p>
+                            <strong>38</strong> m<sup>2</sup>
+                        </p>
+
+                </div>
+                        <div class="detail-card__floor">
+                            <span>Piętro:</span>
+                            <p>
+                                <strong>4</strong>
+                                <span>/4</span>
+                            </p>
+                        </div>
+                    <div class="detail-card__rooms">
+                        <span>Liczba pokoi:</span>
+                        <p>
+                            <strong itemprop="numberOfRooms">2</strong>
+                        </p>
+                    </div>
+
+                <span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+                    <meta itemprop="addressLocality" content="Gdynia" />
+                    <meta itemprop="addressRegion" content="pomorskie" />
+                    <meta itemprop="streetAddress" content="Narcyzowa" />
+                </span>
+
+                    <span itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+                        <meta itemprop="latitude" content="54,4985682" />
+                        <meta itemprop="longitude" content="18,5178814" />
+                    </span>
+            </div>
+            <div class="detail-card__footer">
+                <div class="detail-card__subtitle">
+                    <h5>
+                        Mieszkanie na wynajem
+                    </h5>
+
+
+
+
+
+                        <span>Standard</span>
+
+                    <span>Starsze niż 14 dni</span>
+                </div>
+                <div class="detail-card__attributes">
+                                                        </div>
+            </div>
+        </div>
+    </a>
+
+
+<div class="detail-card__popup">
+    <span class="detail-popup__arrow"></span>
+    <section class="detail-popup__details">
+        <div class="detail-popup__heading">
+            <h4>
+                <a title="mieszkanie Gdynia Witomino 38m2" href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-narcyzowa-38m2/147352554?clicksource=standard"
+                     onmousedown="_kropka.push(['WynikiKlikOgloszenieOrganic', 'a147352554']);"     >
+                    Gdynia, Witomino, Narcyzowa
+                </a>
+            </h4>
+            <a href="http://www.domiporta.pl/nieruchomosci/wynajme-mieszkanie-dwupokojowe-gdynia-witomino-narcyzowa-38m2/147352554?clicksource=standard#Detale" class="detail-popup__button--contact dp-button" id="listing-rw-podglad-ogloszenia-kontakt">
+                Kontakt
+            </a>
+        </div>
+        <div class="detail-popup__desc">
+            <p>
+Witam,
+
+ Do wynajęcia mamy przepiękne wyposażone mieszkanie.
+ Składa się z przedpokoju z małą szafą, w pełni wyposażonej łazienki, zabudowanej kuchni ze sprzętem i przestronnego salonu z fajnym widokiem oraz sypialni z ł&#243;żkiem, szafą i biurkiem.
+
+ Mieszkanie nie jest drogie w utrzymaniu, czyn...            </p>
+        </div>
+    </section>
+</div>
+
+</div>                    <section class="cloned-premiums-container"></section>
+                    <script>
+                        emitter.emit('elementLoaded', {
+                            element: 'clonedAdpremium'
+                        });
+                    </script>
+        <div class="listing-settings listing-settings--bottom">
+
+        </div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var device = "Pc";
+                    var userDevice = getUserDeviceSymbol(device);
+                    window.criteo_q = window.criteo_q || [];
+                    window.criteo_q.push(
+                        { event: "setAccount", account: 15503 },
+                        { event: "setSiteType", type: userDevice },
+                        { event: "viewList", item: ["1111147909122","1111147817033","1111147742479"] }
+                    );
+
+                });
+            </script>
+    </div>
+                                    <div id="adcontainer2"></div>
+                            </div>
+                            <div class="TextalignLeft FloatRight PrawaRamka Wyniki">
+                                <div class="clearfix">
+
+                                    <div class="OgloszeniaPromowane">
+	<!-- FIXME - we should render something here like a loader or something -->
+</div>
+<script>
+    emitter.emit('elementLoaded', {
+        element: 'top3'
+    });
+</script>
+
+
+<div id="advertAlertBar" class="notify notify--advert-alert">
+    <h3>Powiadomienia</h3>
+    <p>
+        Chcesz <strong>za darmo</strong> otrzymywać<br />
+        powiadomienia o najnowszych<br />
+        ofertach spełniających kryteria<br />
+        Twojego wyszukiwania? Kliknij<br />
+        i skorzystaj z funkcji powiadomienia!
+    </p>
+    <input type="button" class="notify__open-modal dp-button" value="Powiadamiaj!" />
+</div>
+<div class="notify-window" id="advertAlertDialog" style="display: none;">
+    <div class="notify-dialog notify-dialog--advert-alert">
+        <header class="notify-dialog__header">
+            <h2 class="notify-dialog__title">Powiadomienia o nowych ofertach</h2>
+        </header>
+
+        <div class="notify-dialog__body">
+            <section class="notify-dialog__intro">
+                <p>
+                    W wypadku pojawienia się nowych ofert z wybranymi przez Ciebie kryteriami wyszukiwania<br />
+                    otrzymasz natychmiastową informację na swój adres e-mail.
+                </p>
+            </section>
+
+            <section class="notify-dialog__criteria">
+
+
+<article class="notify-criteria">
+    <span class="notify-criteria__icon"></span>
+    <div class="notify-criteria__body">
+        <p>Twoje kryteria wyszukiwania:</p>
+        <ul>
+                <li>
+            <span>
+                Lokalizacja: <strong>pomorskie, Gdynia, Witomino</strong>
+            </span>
+    </li>
+
+
+                <li>
+            <span>
+                Typ nieruchomości: <strong>Mieszkanie</strong>
+            </span>
+    </li>
+
+
+                <li>
+            <span>
+                Typ oferty: <strong>Wynajem</strong>
+            </span>
+    </li>
+
+
+
+
+
+
+                <li>
+            <span>
+                Piętro: <strong>od 4.</strong>
+            </span>
+    </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </ul>
+    </div>
+</article>
+
+
+            </section>
+
+            <section class="notify-dialog__form">
+
+
+<div id="advertAlertWrapper">
+    <div id="advertAlertFormContainer">
+<form action="/AdvertAlert/Create" class="clearfix" id="advertAlertForm" method="post" novalidate="novalidate"><input id="SearchCriteria_Localization" name="SearchCriteria.Localization" type="hidden" value="pomorskie, Gdynia, Witomino" /><input data-val="true" data-val-number="The field From must be a number." id="SearchCriteria_Pietro_From" name="SearchCriteria.Pietro.From" type="hidden" value="4" /><input id="SearchCriteria_AdType" name="SearchCriteria.AdType" type="hidden" value="Rent" /><input id="SearchCriteria_CategoryName" name="SearchCriteria.CategoryName" type="hidden" value="Mieszkanie" /><input data-val="true" data-val-required="The Map field is required." id="SearchCriteria_Map" name="SearchCriteria.Map" type="hidden" value="False" /><input type="hidden" name="ts" value="1510757852"><input type="hidden" name="ch" value="1"><input id="FS" type="text" name="Url" value="" >            <span class="obligatory-disclaimer">*pole obowiązkowe</span>
+            <div class="FormElement">
+                <label for="SenderName">Imię<sup>*</sup></label>
+                <input data-val="true" data-val-required="IncorrectName" id="SenderName" name="SenderName" type="text" value="" />
+            </div>
+            <div class="FormElement">
+                <label for="SenderEmail">Adres e-mail<sup>*</sup></label>
+                <input data-val="true" data-val-regex="IncorrectEmail" data-val-regex-pattern="^([\w-\.]+@([\w-]+\.)+[\w-]{2,})?$" data-val-required="IncorrectEmail" id="SenderEmail" name="SenderEmail" type="text" value="" />
+            </div>
+            <div class="FormElement">
+                <label for="SenderPhone">Numer telefonu<sup>*</sup></label>
+                <input data-val="true" data-val-required="IncorrectPhone" id="SenderPhone" name="SenderPhone" type="text" value="" />
+            </div>
+            <div class="agreementsBox White contactCard clearfix">
+                <div class="agreementsBox White contactCard clearfix">
+                    <div class="checkboxElem ui-checkbox clearfix AcceptRegulations">
+                        <div class="AgreementPosition clearfix">
+                            <input type="checkbox" class="checkbox" name="AgreementId" value="2dad0212-a02d-4632-8965-b91b27273cbb" id="IsRegulationsChecked1" data-val="true" data-rule-required="true" />
+                            <label for="IsRegulationsChecked1">
+                                <sup style="color: rgb(255, 102, 0); font-size: 14px; font-weight: 600;">* </sup>
+                                Akceptuję <a href="/regulamin-serwisu" class="Active" target="_blank">regulamin</a> Domiporta.pl *
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checkboxElem ui-checkbox clearfix SimilarOffers">
+                        <div class="AgreementPosition clearfix">
+                            <input type="checkbox" class="checkbox" name="AgreementId" value="30dbeb2a-1a1c-4433-90cf-b3b4073d7dc7" id="IsCommercialChecked1" />
+                            <label for="IsCommercialChecked1">
+                                <span data-expand="" class="agreement--short">
+                                    <span class="agreement__text">Wyrażam zgodę na otrzymywanie informacji handlowych od Trader.com (Polska)</span>
+                                    <span data-expand-trigger="" class="expand-agreement">... rozwiń</span>
+                                </span>
+                                <span data-expand="" class="agreement--full">
+                                    <span class="agreement__text">Wyrażam zgodę na otrzymywanie informacji handlowych od spółki Trader.com (Polska) Sp. z o.o. pochodzących od niej bezpośrednio lub na zlecenie podmiotów trzecich na adres e-mail i/lub nr. telefonu podany w formularzu.</span>
+                                    <span data-expand-trigger="" class="expand-agreement">zwiń</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checkboxElem ui-checkbox clearfix CheapCredit">
+                        <div class="AgreementPosition clearfix">
+                            <input type="checkbox" class="checkbox" name="AgreementId" value="be79da4f-3dea-43a7-a665-c0a42281e54a" id="IsCheapCreditCheckActive1" />
+                            <label for="IsCheapCreditCheckActive1">
+                                <span data-expand="" class="agreement--short">
+                                    <span class="agreement__text">Chcę otrzymać porównanie kredytów dla tej nieruchomości</span>
+                                    <span data-expand-trigger="" class="expand-agreement">... rozwiń</span>
+                                </span>
+                                <span data-expand="" class="agreement--full">
+                                    <span class="agreement__text">Oświadczam, że wyrażam zgodę na przetwarzanie przez Expander Advisors Sp. z o.o. z siedzibą w Warszawie, moich danych osobowych zawartych w przedłożonych dokumentach oraz przekazanych przeze mnie w procesie obsługi klienta (w tym w zakresie wskazanym w niniejszym formularzu) w celach związanych z zawarciem umowy pośrednictwa i doradztwa finansowego oraz umowy pośrednictwa w obrocie nieruchomościami, jak również wykonywania usług z tym związanych. Wyrażenie zgody jest dobrowolne. Przyjmuję do wiadomości, że mam prawo dostępu do treści swoich danych osobowych oraz ich poprawienia, zgodnie z Ustawą o ochronie danych osobowych z dnia 29 sierpnia 1997 r. (t.j. Dz.U.2015 poz. 2135 ze zm.). Administratorem danych osobowych jest Expander Advisors Sp. z o.o. z siedzibą w Warszawie (00-838), ul. Prosta 69.>.</span>
+                                    <span data-expand-trigger="" class="expand-agreement">zwiń</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" value="Powiadamiaj mnie!" class="dp-button" id="listing-rw-powiadamiacz-uruchom">
+</form>    </div>
+</div>
+
+            </section>
+
+            <section class="PersonalDataAdministratorNote">
+                <span data-expand class="AdminNoteShown">
+                    Informujemy, że administratorem podanych przez Państwa danych osobowych jest Trader.com (Polska) sp. z o.o. z siedzibą w Warszawie
+                    <span data-expand-trigger class="expand-agreement">... rozwiń</span>
+                </span>
+                <span data-expand class="AdminNoteHidden">
+                    Informujemy, że administratorem podanych przez Państwa danych osobowych jest Trader.com (Polska) sp. z o.o. z siedzibą w Warszawie, ul. Czerska 8/10 wydawcy serwisu Domiporta.pl. Przysługuje Państwu prawo dostępu do treści danych osobowych, ich poprawiania, prawo do uzyskania informacji o celu, zakresie i sposobie przetwarzania danych osobowych, a także prawo wniesienia pisemnego żądania zaprzestania przetwarzania danych. Regulamin korzystania z usługi oraz Polityka prywatności są dostępne pod adresami: <a href="http://www.domiporta.pl/regulamin-serwisu" target="_blank">http://www.domiporta.pl/regulamin-serwisu</a>, <a href="http://www.domiporta.pl/polityka-prywatnosci" target="_blank">http://www.domiporta.pl/polityka-prywatnosci</a>.
+                    <span data-expand-trigger class="expand-agreement">zwiń</span>
+                </span>
+            </section>
+        </div>
+    </div>
+    <div class="notify-dialog__result bottomNotification">
+        <div class="notify-dialog__result--fail sendFail">
+            <span class="notify-result-icon--fail"></span>
+            <p class="bnTitle">Wystąpił błąd</p>
+            <p>Wystąpił błąd, w wyniku którego nie udało się wysłać zgłoszenia. <br>Spróbuj ponownie lub skontaktuj się z Biurem Obsługi Klienta.</p>
+            <span class="bnBtnBack">Wróć i spróbuj ponownie</span>
+            <span class="bnBtn">Zamknij okno</span>
+        </div>
+        <div class="notify-dialog__result--sucess sendSuccess">
+            <span class="notify-result-icon--success"></span>
+            <p class="bnTitle">Z sukcesem zapisałeś się na powiadamiacz!</p>
+            <p>Sprawdź pocztę e-mail i potwierdź aktywację.</p>
+            <span class="bnBtn">Zamknij okno</span>
+        </div>
+    </div>
+    <div class="closeLayer"></div>
+</div>                                    <div id="developerPromotionsBar" class="notify notify--developer-promotions">
+    <h3>Promocje deweloperskie</h3>
+    <p>
+        Bądź najlepiej poinformowany<br />
+        i dowiedz się pierwszy o najnowszych<br />
+        akcjach promocyjnych deweloperów.
+    </p>
+    <input type="button" value="Informuj mnie!" class="notify__open-modal dp-button">
+</div>
+<div class="notify-window" id="developerPromotionsDialog" style="display: none;">
+    <div class="notify-dialog notify-dialog--developer-promotions">
+        <header class="notify-dialog__header">
+            <h2 class="notify-dialog__title">Promocje deweloperskie</h2>
+        </header>
+
+        <div class="notify-dialog__body">
+            <section class="notify-dialog__intro">
+                <p>
+                    Bądź na bieżąco i dowiaduj się pierwszy o promocjach deweloperskich. Podaj swój adres<br />
+                    email i otrzymuj najświeższe promocje prosto na swój adres email.
+                </p>
+            </section>
+
+            <section class="notify-dialog__form">
+
+
+
+<div id="developerPromotionsWrapper">
+    <div id="developerPromotionsFormContainer">
+<form action="/DeveloperPromotions/Send" data-event-gtm="PromocjaDeweloperskaZapiszSieRwLayer" id="developerPromotionsOverlayForm" method="post" novalidate="novalidate">            <span class="obligatory-disclaimer">*pole obowiązkowe</span>
+            <div class="FormElement">
+                <label>Lokalizacja<sup>*</sup></label>
+                <select id="DeveloperPromotions_SenderLocation" name="location"><option>Wybierz</option>
+<option>Białystok</option>
+<option>Gdańsk / Sopot / Gdynia</option>
+<option>Katowice</option>
+<option>Kielce</option>
+<option>Krak&#243;w</option>
+<option>Lublin</option>
+<option>Olsztyn</option>
+<option>Opole</option>
+<option>Poznań</option>
+<option>Rzesz&#243;w</option>
+<option>Szczecin</option>
+<option>Toruń / Bydgoszcz</option>
+<option>Warszawa</option>
+<option>Wrocław</option>
+<option>Zielona G&#243;ra / Gorz&#243;w Wlkp.</option>
+</select>
+            </div>
+            <div class="FormElement">
+                <label for="DeveloperPromotions_SenderEmail">Adres e-mail<sup>*</sup></label>
+                <input type="email" name="email" id="DeveloperPromotions_SenderEmail">
+            </div>
+            <div class="agreementsBox White contactCard clearfix">
+                <div class="checkboxElem ui-checkbox clearfix AcceptRegulations">
+                    <div class="AgreementPosition clearfix">
+                        <input type="checkbox" class="checkbox" name="AgreementId" value="2dad0212-a02d-4632-8965-b91b27273cbb" data-val="true" id="IsRegulationsChecked2">
+                        <label for="IsRegulationsChecked2">Akceptuję <a href="/regulamin-serwisu" class="Active" target="_blank">regulamin</a> Domiporta.pl *</label>
+                    </div>
+                </div>
+                <div class="checkboxElem ui-checkbox clearfix SimilarOffers">
+                    <div class="AgreementPosition clearfix">
+                        <input type="checkbox" class="checkbox" name="AgreementId" value="30dbeb2a-1a1c-4433-90cf-b3b4073d7dc7" data-val="true" id="IsCommercialChecked2">
+                        <label for="IsCommercialChecked2">
+                            <span data-expand="" class="agreement--short">
+                                <span class="agreement__text"><sup style="color: rgb(255, 102, 0); font-size: 14px; font-weight: 600;">* </sup>Wyrażam zgodę na otrzymywanie informacji handlowych od Trader.com (Polska)</span>
+                                <span data-expand-trigger="" class="expand-agreement">... rozwiń</span>
+                            </span>
+                            <span data-expand="" class="agreement--full">
+                                <span class="agreement__text"><sup style="color: rgb(255, 102, 0); font-size: 14px; font-weight: 600;">* </sup>Wyrażam zgodę na otrzymywanie informacji handlowych od spółki Trader.com (Polska) Sp. z o.o. pochodzących od niej bezpośrednio lub na zlecenie podmiotów trzecich na adres e-mail i/lub nr. telefonu podany w formularzu.</span>
+                                <span data-expand-trigger="" class="expand-agreement">zwiń</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" value="Informuj mnie!" class="dp-button" id="listing-rw-promocje-deweloperskie-uruchom">
+</form>    </div>
+</div>
+            </section>
+
+            <section class="PersonalDataAdministratorNote">
+                <span data-expand class="AdminNoteShown">
+                    Informujemy, że administratorem podanych przez Państwa danych osobowych jest Trader.com (Polska) sp. z o.o. z siedzibą w Warszawie
+                    <span data-expand-trigger class="expand-agreement">... rozwiń</span>
+                </span>
+                <span data-expand class="AdminNoteHidden">
+                    Informujemy, że administratorem podanych przez Państwa danych osobowych jest Trader.com (Polska) sp. z o.o. z siedzibą w Warszawie, ul. Czerska 8/10 wydawcy serwisu Domiporta.pl. Przysługuje Państwu prawo dostępu do treści danych osobowych, ich poprawiania, prawo do uzyskania informacji o celu, zakresie i sposobie przetwarzania danych osobowych, a także prawo wniesienia pisemnego żądania zaprzestania przetwarzania danych. Regulamin korzystania z usługi oraz Polityka prywatności są dostępne pod adresami: <a href="http://www.domiporta.pl/regulamin" target="_blank">http://www.domiporta.pl/regulamin</a>, <a href="http://www.domiporta.pl/polityka-prywatnosci" target="_blank">http://www.domiporta.pl/polityka-prywatnosci</a>.
+                    <span data-expand-trigger class="expand-agreement">zwiń</span>
+                </span>
+            </section>
+        </div>
+    </div>
+    <div class="notify-dialog__result bottomNotification">
+        <div class="notify-dialog__result--fail sendFail">
+            <span class="notify-result-icon--fail"></span>
+            <p class="bnTitle">Wystąpił błąd</p>
+            <p>Wystąpił błąd, w wyniku którego nie udało się wysłać zgłoszenia. <br>Spróbuj ponownie lub skontaktuj się z Biurem Obsługi Klienta.</p>
+            <span class="bnBtnBack">Wróć i spróbuj ponownie</span>
+            <span class="bnBtn">Zamknij okno</span>
+        </div>
+        <div class="notify-dialog__result--sucess sendSuccess">
+            <span class="notify-result-icon--success"></span>
+            <p class="bnTitle">Z sukcesem zapisałeś się na promocje deweloperskie!</p>
+            <span class="bnBtn">Zamknij okno</span>
+        </div>
+    </div>
+    <div class="closeLayer"></div>
+    <div class="component-spinner">
+        <svg class="spinner" width="120px" height="120px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+            <circle class="circle" fill="none" stroke-width="3" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+        </svg>
+    </div>
+</div>
+
+
+
+
+                                        <section class="links-cloud">
+        <div class="links-cloud__header">
+            <div class="links-cloud__header-wrapper">
+                <span class="links-cloud__arrow links-cloud__arrow--left" style="display: none;"></span>
+                <ul class="links-cloud__category-list">
+                        <li class="links-cloud__category links-cloud__category--active" data-links-id="0">Dzielnice</li>
+                        <li class="links-cloud__category " data-links-id="1">Ulice</li>
+                        <li class="links-cloud__category " data-links-id="2">Inne</li>
+                </ul>
+                <span class="links-cloud__arrow links-cloud__arrow--right" style="display: none;"></span>
+            </div>
+        </div>
+        <div class="links-cloud__body">
+            <div class="links-cloud__wrapper">
+                    <ul class="links-cloud__list " data-links-id="0">
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/orlowo">Mieszkania na wynajem Orłowo</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/maly-kack">Mieszkania na wynajem Mały Kack</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/redlowo">Mieszkania na wynajem Redłowo</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/dzialki-lesne">Mieszkania na wynajem Działki Leśne</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/wzgorze-sw-maksymiliana">Mieszkania na wynajem Wzg&#243;rze Św. Maksymiliana</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/wielki-kack">Mieszkania na wynajem Wielki Kack</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/dabrowa">Mieszkania na wynajem Dąbrowa</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/obluze">Mieszkania na wynajem Obłuże</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/grabowek">Mieszkania na wynajem Grab&#243;wek</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/oksywie">Mieszkania na wynajem Oksywie</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/chwarzno">Mieszkania na wynajem Chwarzno</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/karwiny">Mieszkania na wynajem Karwiny</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/cisowa">Mieszkania na wynajem Cisowa</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/srodmiescie">Mieszkania na wynajem Śr&#243;dmieście</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/pogorze">Mieszkania na wynajem Pog&#243;rze</a></li>
+                    </ul>
+                    <ul class="links-cloud__list hidden" data-links-id="1">
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/legionow">Mieszkania na wynajem Legion&#243;w</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/swietojanska">Mieszkania na wynajem Świętojańska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/stefana-zeromskiego">Mieszkania na wynajem Stefana Żeromskiego</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/morska">Mieszkania na wynajem Morska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/warszawska">Mieszkania na wynajem Warszawska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/a-hryniewickiego">Mieszkania na wynajem A. Hryniewickiego</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/kielecka">Mieszkania na wynajem Kielecka</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/bernadowska">Mieszkania na wynajem Bernadowska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/kaczewska">Mieszkania na wynajem Kaczewska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/kaliska">Mieszkania na wynajem Kaliska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/orlowska">Mieszkania na wynajem Orłowska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/radunska">Mieszkania na wynajem Raduńska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/strzelcow">Mieszkania na wynajem Strzelc&#243;w</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/slaska">Mieszkania na wynajem Śląska</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/armii-krajowej">Mieszkania na wynajem Armii Krajowej</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/ignacego-krasickiego">Mieszkania na wynajem Ignacego Krasickiego</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/olgierda">Mieszkania na wynajem Olgierda</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/plac-kaszubski">Mieszkania na wynajem plac Kaszubski</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/moniuszki-stanislawa">Mieszkania na wynajem Moniuszki Stanisława</a></li>
+                            <li><a href="http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/antoniego-abrahama">Mieszkania na wynajem Antoniego Abrahama</a></li>
+                    </ul>
+                    <ul class="links-cloud__list hidden" data-links-id="2">
+                            <li><a href="http://www.domiporta.pl/dom/wynajme/pomorskie/gdynia/witomino">Domy na wynajem Witomino</a></li>
+                            <li><a href="http://www.domiporta.pl/pokoj/wynajme/pomorskie/gdynia/witomino">Pokoje na wynajem Witomino</a></li>
+                            <li><a href="http://www.domiporta.pl/garaz/wynajme/pomorskie/gdynia/witomino">Garaże na wynajem Witomino</a></li>
+                            <li><a href="http://www.domiporta.pl/dzialke/wydzierzawie/pomorskie/gdynia/witomino">Działki na wynajem Witomino</a></li>
+                            <li><a href="http://www.domiporta.pl/lokal-uzytkowy/wynajme/pomorskie/gdynia/witomino">Lokale użytkowe na wynajem Witomino</a></li>
+                            <li><a href="http://www.domiporta.pl/nieruchomosci/wynajme/pomorskie/gdynia/witomino">Ogłoszenia nieruchomości Witomino</a></li>
+                    </ul>
+            </div>
+            <span class="links-cloud__toggle">rozwiń listę</span>
+            <span class="links-cloud__toggle links-cloud__toggle--hidden">zwiń listę</span>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+    <section class="seo-box article">
+        <div class="seo-box__header">
+            <div class="seo-box__header-wrapper">
+                <h3>Najnowsze artykuły</h3>
+            </div>
+        </div>
+        <div class="seo-box__body">
+            <div class="seo-box__wrapper">
+                <ul class="seo-box__list">
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157749,22645235,125-krakowska-gielda-domow-i-mieszkan.html" title="125. Krakowska Giełda Dom&#243;w i Mieszkań">125. Krakowska Giełda Dom&#243;w i Mieszkań</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157744,22622364,w-sam-raz-dla-domoroslych-deweloperow-house-flipper-to-najdziwniejsza.html" title="W sam raz dla domorosłych deweloper&#243;w! House Flipper to najdziwniejsza gra o jakiej dzisiaj usłyszysz">W sam raz dla domorosłych deweloper&#243;w! House Flipper to najdziwniejsza gra o jakiej dzisiaj usłyszysz</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,127351,22639489,kup-sobie-kosciol-do-kupienia-swiatynia-zamieniona-w-przytulny.html" title="Kup sobie kości&#243;ł. Do kupienia świątynia zamieniona w przytulny dom w Anglii za cenę apartamentu w Warszawie">Kup sobie kości&#243;ł. Do kupienia świątynia zamieniona w przytulny dom w Anglii za cenę apartamentu w Warszawie</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157744,22623612,najladniejszy-widok-na-calym-manhattanie-cena-255-milionow.html" title="Najładniejszy widok na całym Manhattanie. Cena - 255 milion&#243;w złotych">Najładniejszy widok na całym Manhattanie. Cena - 255 milion&#243;w złotych</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157743,22616947,tak-mieszkala-edith-piaf-nad-lazurowym-wybrzezem-je-posiadlosc.html" title="Tak mieszkała &#201;dith Piaf nad Lazurowym Wybrzeżem - posiadłość została wystawiona na sprzedaż">Tak mieszkała &#201;dith Piaf nad Lazurowym Wybrzeżem - posiadłość została wystawiona na sprzedaż</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157749,22613820,wroclove-znajdz-miejsce-ktore-pokochasz-targi-na-swoim.html" title="WrocLOVE - znajdź miejsce, kt&#243;re pokochasz. Targi &quot;Na Swoim&quot; we Wrocławiu">WrocLOVE - znajdź miejsce, kt&#243;re pokochasz. Targi &quot;Na Swoim&quot; we Wrocławiu</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157743,22612908,zbyt-ekstrawagancki-by-znalezc-kupca-tommy-hilfiger-sprzedaje.html" title="Tommy Hilfiger i Donald Trump - łączy ich jeden budynek. Hotel Plaza w Nowym Jorku">Tommy Hilfiger i Donald Trump - łączy ich jeden budynek. Hotel Plaza w Nowym Jorku</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,127356,22609131,mieszkanie-to-nie-siedziba-firmy-skarbowka-bierze-sie-za-oszustwa.html" title="Mieszkanie to nie siedziba firmy - skarb&#243;wka bierze się za mikroprzedsiębiorc&#243;w">Mieszkanie to nie siedziba firmy - skarb&#243;wka bierze się za mikroprzedsiębiorc&#243;w</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,157734,22594711,39-rodzicow-pozycza-pieniadze-dzieciom-na-zobowiazania-kredytowe.html" title="39 proc. rodzic&#243;w w UK pożycza dzieciom pieniądze na mieszkanie. W podkarpackim jest to 72 proc.">39 proc. rodzic&#243;w w UK pożycza dzieciom pieniądze na mieszkanie. W podkarpackim jest to 72 proc.</a></li>
+                        <li class="article-item"><a href="http://www.domiporta.pl/poradnik/7,127356,22583777,przepisy-zakazy-i-nakazy-czyli-wszystko-co-chcielibyscie-wiedziec.html" title="Czy można założyć prywatny cmentarz - wszystkie ważne informacje o polskich nekropoliach">Czy można założyć prywatny cmentarz - wszystkie ważne informacje o polskich nekropoliach</a></li>
+                </ul>
+            </div>
+            <span class="seo-box__toggle">rozwiń listę</span>
+            <span class="seo-box__toggle seo-box__toggle--hidden">zwiń listę</span>
+        </div>
+    </section>
+
+
+
+
+                                    <div class="advxMovingWrap">
+                                        <div class="adviewDFPBanner DFP-003-RECTANGLE" id="003-RECTANGLE"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-003-RECTANGLE"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-003-RECTANGLE'); });</script></div></div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ClearBoth"></div>
+                        </div>
+
+                    </div>
+                </section>
+            </main>
+        </article>
+
+
+<footer class="page-footer">
+    <div class="footer-menu">
+        <ul class="content-row clearfix">
+            <li>
+                <a href="http://www.domiporta.pl/o-nas">O nas</a>
+            </li>
+            <li>
+                <a href="http://www.domiporta.pl/regulamin-serwisu"><b>Nowy regulamin*</b></a>
+            </li>
+            <li>
+                <a href="http://www.domiporta.pl/polityka-prywatnosci">Polityka prywatności</a>
+            </li>
+
+            <li>
+                <a href="http://www.domiporta.pl/oferta">Reklama</a>
+            </li>
+            <li>
+                <a href="http://www.domiporta.pl/kontakt">Kontakt</a>
+            </li>
+            <li>
+                <a href="http://www.domiporta.pl/cennik-ogloszen">Cennik</a>
+            </li>
+            <li>
+                <a href="http://www.domiporta.pl/katalog-firm">Katalog firm</a>
+            </li>
+            <li>
+
+                <a href="http://www.domiporta.pl/mapa-serwisu">Mapa serwisu</a>
+            </li>
+        </ul>
+    </div>
+    <div class="content-row bottom-info clearfix">
+        <span>* obowiązuje od 14.09.2017</span>
+        <span class="copyrights">Copyright &copy; <a href="http://www.domiporta.pl/" title="Domiporta - ogłoszenie nieruchomości">Domiporta.pl</a> 2017</span>
+    </div>
+</footer>
+<script type="text/javascript">
+    (function () {
+        var fs = document.createElement('script');
+        fs.type = 'text/javascript';
+        var src = 'http://www.domiporta.pl/Resources/Scripts/stopka';
+        fs.src = src.replace('http:', ('https:' == document.location.protocol ? 'https:' : 'http:'));
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(fs, s);
+
+        var csSrc = 'http://www.domiporta.pl/Resources/bundles/style-shared';
+        csSrc = csSrc.replace('http:', ('https:' == document.location.protocol ? 'https:' : 'http:'));
+
+        var linkEl = document.createElement('link');
+        linkEl.rel = 'stylesheet';
+        linkEl.type = 'text/css';
+        linkEl.href = csSrc;
+
+        document.head.insertAdjacentElement('beforeend', linkEl);
+    })();
+</script>
+<script type="text/javascript" src="//squid.gazeta.pl/bdtrck/getScript/bluewhale?src=19"></script>
+
+    </div>
+    <div class="adviewDFPBanner DFP-019-TOPLAYER" id="019-TOPLAYER"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-019-TOPLAYER"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-019-TOPLAYER'); });</script></div></div>
+    <div class="adviewDFPBanner DFP-042-FOOTBOARD" id="042-FOOTBOARD"><span class="banLabel" style="display: none;">REKLAMA</span><div id="div-042-FOOTBOARD"><script type="text/javascript">googletag.cmd.push(function () { googletag.display('div-042-FOOTBOARD'); });</script></div></div>
+
+    <script type="text/javascript">
+        (function() {
+            var pageContainer = document.body;
+            var footboard = document.getElementById('042-FOOTBOARD-DIV');
+            var footboardIframe;
+            var isIframeLoaded = false;
+
+            function setContainerMargin() {
+                var marginValue = parseInt(window.getComputedStyle(footboard).height, 10);
+
+                pageContainer.style.marginBottom = marginValue + 'px';
+            }
+
+            window.addEventListener('message', function iframeMessageHandler(e) {
+                if (e.data === 'ftb_load_success' || e.data[0] === 'ftb_set_size') {
+                    if (!isIframeLoaded && footboard.querySelector('iframe') !== null) {
+                        footboardIframe = footboard.querySelector('iframe');
+                        isIframeLoaded = true;
+                    }
+
+                    if (e.data === 'ftb_load_success') {
+                        setContainerMargin();
+
+                        var timedOutResize;
+
+                        window.addEventListener('resize', function() {
+                            clearTimeout(timedOutResize);
+                            timedOutResize = setTimeout(setContainerMargin, 100);
+                        });
+                    } else if (e.data[0] === 'ftb_set_size') {
+                        footboardIframe.width = e.data[1];
+                        footboardIframe.height = e.data[2];
+                    }
+                }
+            });
+        }());
+    </script>
+
+
+<div class="exit-popup-modal" data-remodal-id="exit">
+    <div class="exit-popup-modal__inner">
+        <span class="exit-popup-close" title="Zamknij okno">
+            <i class="sprite sprite--exit-popup-close"></i>
+        </span>
+        <div class="exit-popup-body">
+<form action="/ExitPopup/Send" id="exit-popup-form" method="post">
+
+<div class="exit-popup-screen exit-popup-screen--criteria" data-exit-screen="criteria">
+    <div class="exit-popup-title">
+        Odpocznij od szukania ofert!
+    </div>
+    <div class="exit-popup-subtitle">
+        Powiedz czego szukasz, a nasi specialiści <strong>bezpłatnie</strong> znajdą mieszkanie odpowiadające Twoim oczekiwaniem!
+    </div>
+    <div class="exit-popup-content">
+        <div class="exit-popup-content-wrapper">
+            <div class="exit-popup-criteria">
+                <div class="exit-popup-criteria__tabs">
+                    <div class="exit-popup-criteria__tab selected" data-market-type="Wtorny">Rynek wtórny</div>
+                    <div class="exit-popup-criteria__tab" data-market-type="Pierwotny">Rynek pierwotny</div>
+                    <input data-val="true" data-val-required="The MarketType field is required." id="exit-popup-market-type" name="MarketType" type="hidden" value="Wszystkie" />
+                </div>
+                <div class="exit-popup-criteria__wrapper">
+                    <div class="exit-popup-content__heading">
+                        <div class="exit-popup-transaction">
+                            <p class="exit-popup-transaction__value">Kupię</p>
+                            <ul class="exit-popup-transaction__window">
+                                <li class="exit-popup-transaction__type" data-transaction-type="Sale">Kupię</li>
+                                <li class="exit-popup-transaction__type" data-transaction-type="Rent">Wynajmę</li>
+                            </ul>
+                            <input id="exit-popup-transaction-type" name="TransactionType" type="hidden" value="Rent" />
+                        </div>
+                        <span>
+                            mieszkanie w
+                            <input id="Category" name="Category" type="hidden" value="Flat" />
+                        </span>
+                        <div class="exit-popup-localization-wrapper">
+                            <input data-val="true" data-val-number="The field LocalizationId must be a number." id="exit-popup-localizationid" name="LocalizationId" type="hidden" value="69913" />
+                            <input autocomplete="off" class="exit-popup-input exit-popup-input--localization" id="exit-popup-localization" name="Location" placeholder="Wpisz lokalizację, np. Warszawa" type="text" value="pomorskie, Gdynia, Witomino" />
+                            <ul class="exit-popup-localization-hints"></ul>
+                        </div>
+                    </div>
+                    <div class="exit-popup-input-group">
+                        <div class="exit-popup-fieldset">
+                            <label>Przedział cenowy</label>
+
+
+<button data-histogram-trigger="TotalPrice" data-suffix="zł">
+    <span class="histogram-slider__trigger-label">wybierz</span>
+    <span class="histogram-slider__trigger-clear"></span>
+</button>
+<div class="histogram-slider" data-histogram-type="TotalPrice">
+    <div class="histogram-slider__label-wrapper">
+        <span class="histogram-slider__label histogram-slider__label--from"></span>
+        <span class="histogram-slider__label-separator">-</span>
+        <span class="histogram-slider__label histogram-slider__label--to"></span>
+    </div>
+    <div class="histogram-slider__slider histogram-slider__slider--TotalPrice nstSlider" data-range_min="50000" data-range_max="2000000" data-cur_min="50000" data-cur_max="2000000">
+        <div class="histogram-slider__bar-slider bar"></div>
+        <div class="histogram-slider__bar-grip histogram-slider__bar-grip--left leftGrip"></div>
+        <div class="histogram-slider__bar-grip histogram-slider__bar-grip--right rightGrip"></div>
+    </div>
+    <div class="histogram-slider__buttons">
+        <span class="histogram-slider__button histogram-slider__button--close">Anuluj</span>
+        <span class="histogram-slider__button histogram-slider__button--submit">Wybierz</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var suffix = "zł";
+
+        $('.histogram-slider__slider--TotalPrice').nstSlider({
+            'crossable_handles': false,
+            'left_grip_selector': '.histogram-slider__bar-grip--left',
+            'right_grip_selector': '.histogram-slider__bar-grip--right',
+            'value_bar_selector': '.histogram-slider__bar-slider',
+            'value_changed_callback': function (cause, leftValue, rightValue) {
+                var $container = $(this).parent();
+                $container.find('.histogram-slider__label--from').html(leftValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '));
+                $container.parent().find('.range-input-left').attr('data-temp', leftValue);
+                $container.find('.histogram-slider__label--to').html(rightValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ') + " " + "zł");
+                $container.parent().find('.range-input-right').attr('data-temp', rightValue);
+            }
+        });
+
+        if ('emitter' in window) {
+            emitter.emit('histogram-init', { type: 'TotalPrice' });
+        }
+    });
+</script>
+                            <input class="range-input-left" data-val="true" data-val-number="The field PriceFrom must be a number." id="PriceFrom" name="PriceFrom" type="hidden" value="" />
+                            <input class="range-input-right" data-val="true" data-val-number="The field PriceTo must be a number." id="PriceTo" name="PriceTo" type="hidden" value="" />
+                        </div>
+                        <div class="exit-popup-fieldset">
+                            <label>Powierzchnia</label>
+
+
+<button data-histogram-trigger="TotalArea" data-suffix="m&lt;sup&gt;2&lt;/sup&gt;">
+    <span class="histogram-slider__trigger-label">wybierz</span>
+    <span class="histogram-slider__trigger-clear"></span>
+</button>
+<div class="histogram-slider" data-histogram-type="TotalArea">
+    <div class="histogram-slider__label-wrapper">
+        <span class="histogram-slider__label histogram-slider__label--from"></span>
+        <span class="histogram-slider__label-separator">-</span>
+        <span class="histogram-slider__label histogram-slider__label--to"></span>
+    </div>
+    <div class="histogram-slider__slider histogram-slider__slider--TotalArea nstSlider" data-range_min="25" data-range_max="200" data-cur_min="25" data-cur_max="200">
+        <div class="histogram-slider__bar-slider bar"></div>
+        <div class="histogram-slider__bar-grip histogram-slider__bar-grip--left leftGrip"></div>
+        <div class="histogram-slider__bar-grip histogram-slider__bar-grip--right rightGrip"></div>
+    </div>
+    <div class="histogram-slider__buttons">
+        <span class="histogram-slider__button histogram-slider__button--close">Anuluj</span>
+        <span class="histogram-slider__button histogram-slider__button--submit">Wybierz</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var suffix = "m&lt;sup&gt;2&lt;/sup&gt;";
+
+        $('.histogram-slider__slider--TotalArea').nstSlider({
+                'rounding': {
+                    '5': '100',
+                    '10': '1000'
+                },
+            'crossable_handles': false,
+            'left_grip_selector': '.histogram-slider__bar-grip--left',
+            'right_grip_selector': '.histogram-slider__bar-grip--right',
+            'value_bar_selector': '.histogram-slider__bar-slider',
+            'value_changed_callback': function (cause, leftValue, rightValue) {
+                var $container = $(this).parent();
+                $container.find('.histogram-slider__label--from').html(leftValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '));
+                $container.parent().find('.range-input-left').attr('data-temp', leftValue);
+                $container.find('.histogram-slider__label--to').html(rightValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ') + " " + "m<sup>2</sup>");
+                $container.parent().find('.range-input-right').attr('data-temp', rightValue);
+            }
+        });
+
+        if ('emitter' in window) {
+            emitter.emit('histogram-init', { type: 'TotalArea' });
+        }
+    });
+</script>
+                            <input class="range-input-left" data-val="true" data-val-number="The field AreaFrom must be a number." id="AreaFrom" name="AreaFrom" type="hidden" value="" />
+                            <input class="range-input-right" data-val="true" data-val-number="The field AreaTo must be a number." id="AreaTo" name="AreaTo" type="hidden" value="" />
+                        </div>
+                        <div class="exit-popup-fieldset">
+                            <label>Liczba pokoi</label>
+
+
+<button data-histogram-trigger="RoomCount" data-suffix="pokoi">
+    <span class="histogram-slider__trigger-label">wybierz</span>
+    <span class="histogram-slider__trigger-clear"></span>
+</button>
+<div class="histogram-slider" data-histogram-type="RoomCount">
+    <div class="histogram-slider__label-wrapper">
+        <span class="histogram-slider__label histogram-slider__label--from"></span>
+        <span class="histogram-slider__label-separator">-</span>
+        <span class="histogram-slider__label histogram-slider__label--to"></span>
+    </div>
+    <div class="histogram-slider__slider histogram-slider__slider--RoomCount nstSlider" data-range_min="1" data-range_max="10" data-cur_min="1" data-cur_max="10">
+        <div class="histogram-slider__bar-slider bar"></div>
+        <div class="histogram-slider__bar-grip histogram-slider__bar-grip--left leftGrip"></div>
+        <div class="histogram-slider__bar-grip histogram-slider__bar-grip--right rightGrip"></div>
+    </div>
+    <div class="histogram-slider__buttons">
+        <span class="histogram-slider__button histogram-slider__button--close">Anuluj</span>
+        <span class="histogram-slider__button histogram-slider__button--submit">Wybierz</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var suffix = "pokoi";
+
+        $('.histogram-slider__slider--RoomCount').nstSlider({
+            'crossable_handles': false,
+            'left_grip_selector': '.histogram-slider__bar-grip--left',
+            'right_grip_selector': '.histogram-slider__bar-grip--right',
+            'value_bar_selector': '.histogram-slider__bar-slider',
+            'value_changed_callback': function (cause, leftValue, rightValue) {
+                var $container = $(this).parent();
+                $container.find('.histogram-slider__label--from').html(leftValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '));
+                $container.parent().find('.range-input-left').attr('data-temp', leftValue);
+                $container.find('.histogram-slider__label--to').html(rightValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ') + " " + "pokoi");
+                $container.parent().find('.range-input-right').attr('data-temp', rightValue);
+            }
+        });
+
+        if ('emitter' in window) {
+            emitter.emit('histogram-init', { type: 'RoomCount' });
+        }
+    });
+</script>
+                            <input class="range-input-left" data-val="true" data-val-number="The field RoomsFrom must be a number." id="RoomsFrom" name="RoomsFrom" type="hidden" value="" />
+                            <input class="range-input-right" data-val="true" data-val-number="The field RoomsTo must be a number." id="RoomsTo" name="RoomsTo" type="hidden" value="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="exit-popup-contact">
+                <div class="exit-popup-content__heading">
+                    <p>Twoje dane kontaktowe</p>
+                    <span>* - wymagane</span>
+                </div>
+                <div class="exit-popup-input-group">
+                    <div class="exit-popup-fieldset">
+                        <input class="exit-popup-input" id="exit-popup-name" name="Name" placeholder="*Twoje imię" type="text" value="" />
+                    </div>
+                    <div class="exit-popup-fieldset">
+                        <input class="exit-popup-input" id="exit-popup-phonenumber" name="PhoneNumber" placeholder="*Twój nr telefonu" type="text" value="" />
+                    </div>
+                    <div class="exit-popup-fieldset">
+                        <input class="exit-popup-input" data-val="true" data-val-required="Podaj adres email" id="exit-popup-email" name="Email" placeholder="*Twój adres e-mail" type="text" value="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dp-button exit-popup-button exit-popup-button--next" id="exit-popup-button-submit">
+            <p>Chcę otrzymywać oferty</p>
+        </div>
+        <div class="exit-popup-acceptance">
+            Wysyłając zapytanie akceptuję <a href="/regulamin-serwisu" target="_blank" title="Regulamin serwisu Domiporta.pl">regulamin</a> serwisu
+        </div>
+    </div>
+</div>
+
+<div class="exit-popup-screen exit-popup-screen--success" data-exit-screen="success" style="display: none;">
+    <div class="exit-popup-title">
+        Dziękujemy<br />
+        za zainteresowanie!
+    </div>
+    <div class="exit-popup-subtitle">
+        Już wkrótce otrzymasz<br />
+        dopasowane dla Ciebie oferty
+    </div>
+    <div class="dp-button exit-popup-button exit-popup-button--close">
+        <p>Zamknij</p>
+    </div>
+</div>
+
+<div class="exit-popup-screen exit-popup-screen--error" data-exit-screen="error" style="display: none;">
+    <div class="exit-popup-title">
+        Wysyłka się nie powiodła
+    </div>
+    <div class="exit-popup-subtitle">
+        To nie Twoja wina, coś się nie udało po naszej stronie.<br />
+        Pracujemy nadtym, żeby wciąż usprawniać serwis i unikać błędów.<br />
+        Przepraszamy
+    </div>
+    <div class="dp-button exit-popup-button exit-popup-button--retry">
+        <p>Spróbuj ponownie</p>
+    </div>
+</div>                    <input type="hidden" name="AgreementId" value="2dad0212-a02d-4632-8965-b91b27273cbb" />
+                    <input type="hidden" name="AgreementId" value="d0c625a0-78b9-478a-ad68-a1cd4a2afd8e" />
+</form>        </div>
+    </div>
+</div></div>
+
+
+<script type="text/javascript">
+var _kropka = _kropka || [];
+_kropka.push(['WynikiOdslona', '']);
+_kropka.push(['WynikiOdslonaOgloszeniaOrganic', 'a147909122','a147817033','a147742479','a147352554']);
+_kropka.push(['AdvertSearchHit', 'u29417','u33222','u1748462205','u21854']);
+(function() {
+    var kropka = document.createElement('script'); kropka.type = 'text/javascript'; kropka.async = true;
+    kropka.src = 'http://kropka2.trader.pl/Content/v2.2/Trader.Statistics.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(kropka, s);
+  })();</script>
+
+<!-- Google remarketing codes -->
+
+<div style="display: block; height: 0; width: 0; overflow: hidden;">
+    <!-- for all codes -->
+        <img height="1" width="1" style="border-style: none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1060893183/?label=sBU6CLXgyQIQ_-Pv-QM&amp;guid=ON&amp;script=0" />
+        <img height="1" width="1" style="border-style: none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1060893183/?label=7rSyCJXkyQIQ_-Pv-QM&amp;guid=ON&amp;script=0" />
+        <img height="1" width="1" style="border-style: none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1060893183/?label=_u7jCJXVyQIQ_-Pv-QM&amp;guid=ON&amp;script=0" />
+        <img height="1" width="1" style="border-style: none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1060893183/?label=eCuDCM3OyQIQ_-Pv-QM&amp;guid=ON&amp;script=0" />
+</div>
+
+
+        <script src="/Resources/bundles/storage?v=DAq73DvAvnwUkPVLva8Dua9rtSeLC7uGeWeeVI0wmn01"></script>
+
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            svg4everybody();
+            _kropka = _kropka || [];
+        });
+    </script>
+
+    <script src="/Resources/bundles/new_listing_js/app?v=BLMkYG4wDqT1IvW21TbBYHBL0iOgeSwxOLa6wxvq2r01"></script>
+
+
+<script>
+    $(document).on('submit', 'form#HpSearchForm', function () {
+        var localization = $("form#HpSearchForm input#Localization").val();
+        var regex = /[.\/,]+$/;
+        if (regex.test(localization) === true) {
+            $("form#HpSearchForm input#Localization").val(localization.replace(regex, ""));
+        }
+    })
+</script>
+
+<script type="text/javascript">
+    var searchBoxPushDataLayer = function (eventId) {
+        var isRw = $('#Rynek1').is(':checked') || false;
+        var eventName = 'wynikiSearch' + (isRw ? 'Og' : 'Rp') + eventId;
+
+        dataLayer.push({ 'event': eventName });
+
+    };
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        TraderLastSearched.updateStatus(function() {
+            if (location.hash != '#sa') {
+                TraderLastSearched.add({"PreventRedirectToRp":false,"HasBeenSearched":true,"NoLocId":false,"ReloadIfFoundNothing":false,"LastSearchCriteriaIndex":0,"DefaultRowsPerPage":40,"RowsPerPage":40,"UserIdExcluded":{"$type":"System.Int32[], mscorlib","$values":[27695,37586]},"AdType":2,"Category":{"Id":191,"Name":"Mieszkanie"},"InsertionDate":{"From":"2017-11-15T14:57:31.5081205Z"},"Rynek":0,"LocalizationFacets":0,"Localization":"pomorskie, Gdynia, Witomino","LocalizationId":69913,"Map":false,"ZoomLevel":16,"Price":{},"PricePerMeter":{},"Surface":{},"PowierzchniaDzialki":{},"Rooms":{},"RokBudowy":{},"Pietro":{"From":4},"LiczbaPieter":{},"OnlyWithPictures":false,"OnlyWithVideo":false,"OnlyWithPicture360":false,"OnlyWithVirtualVisit":false,"OnlyGeoCoded":false,"OnlyExclusive":false,"OnlyAdPremium":false,"OnlyAuctions":false,"PageNumber":1,"SortingOrder":0,"DefaultSortingOrder":0,"SortingDirection":1}, "http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdynia/witomino?FromLastSearch=True\u0026Pietro.From=4\u0026InsertionDate.From=2017-11-15%2014%3A57%3A31Z", "\u003cstrong\u003eWszystkie rynki - Mieszkanie - Wynajem - pomorskie, Gdynia, Witomino\u003c/strong\u003e", "Wszystkie rynki - Mieszkanie - Wynajem - pomorskie, Gdynia, Witomino");
+            }
+
+            $(function () {
+                TraderLastSearched.reactOnPagination({"PreventRedirectToRp":false,"HasBeenSearched":true,"NoLocId":false,"ReloadIfFoundNothing":false,"LastSearchCriteriaIndex":0,"DefaultRowsPerPage":40,"RowsPerPage":40,"UserIdExcluded":{"$type":"System.Int32[], mscorlib","$values":[27695,37586]},"AdType":2,"Category":{"Id":191,"Name":"Mieszkanie"},"InsertionDate":{"From":"2017-11-15T14:57:31.5081205Z"},"Rynek":0,"LocalizationFacets":0,"Localization":"pomorskie, Gdynia, Witomino","LocalizationId":69913,"Map":false,"ZoomLevel":16,"Price":{},"PricePerMeter":{},"Surface":{},"PowierzchniaDzialki":{},"Rooms":{},"RokBudowy":{},"Pietro":{"From":4},"LiczbaPieter":{},"OnlyWithPictures":false,"OnlyWithVideo":false,"OnlyWithPicture360":false,"OnlyWithVirtualVisit":false,"OnlyGeoCoded":false,"OnlyExclusive":false,"OnlyAdPremium":false,"OnlyAuctions":false,"PageNumber":1,"SortingOrder":0,"DefaultSortingOrder":0,"SortingDirection":1}, 2, function() {
+                    var hideOneToMany = sessionStorage.getItem('hideOneToMany');
+                    var cappingOneToMany = JSON.parse(sessionStorage.getItem('cappingOneToMany'));
+
+                    if (cappingOneToMany === null) cappingOneToMany = 0;
+
+                    if (hideOneToMany != '1' && cappingOneToMany < 3) {
+                        $('#oneToManyBar:visible .notify__open-modal').trigger('click', ['oneToMany', 'auto']);
+                        sessionStorage.setItem('cappingOneToMany', JSON.stringify(++cappingOneToMany));
+                    }
+                });
+
+                if ('emitter' in window) {
+                    emitter.emit('searchboxScriptsInit');
+                }
+
+                var hideOneToMany = sessionStorage.getItem('hideOneToMany');
+                if (hideOneToMany == '1') {
+                    $('#oneToManyBar').hide();
+                }
+
+
+            });
+
+            var lastSearched = TraderLastSearched.getLatestNDefinition(10);
+            var showLastSearched = function() {
+                var sc = [];
+                for (var i = 0; i < lastSearched.length; i++) {
+                    sc.push(lastSearched[i].criteria);
+                }
+                TraderLastSearched.getSearchCounts('/Search/SearchCriteriaCount', sc);
+            };
+
+            $(document.body).on('click', '#LastSearchedBox .OkienkoZamknij', function() {
+                $('#LastSearchedBox').dialog('close');
+                return false;
+            });
+
+            var lastSearchedItem = "\r\n\r\n \u003cdiv class=\"TwojeWyszukiwaniaElement\" onclick=\"dataLayer.push({\u0027event\u0027: \u0027hpSzukajS\u0027});\"\u003e\r\n    \u003ca href=\"#url#\" title=\"#aTitle#\" onmousedown=\"_kropka.push([\u0027GlownaKlikOstatnieWyszukiwanie\u0027, \u0027\u0027]);\"\u003e\r\n\t\t\u003cdiv class=\"FloatLeft TwojeWyszukiwaniaTresc\"\u003e\r\n\t\t\t#formattedCrtieria#\r\n\t\t\t\u003cspan class=\"ZanikanieTekstu\"\u003e\u003c/span\u003e\r\n\t\t\u003c/div\u003e\r\n\t\t\u003cdiv class=\"FloatRight TwojeWyszukiwaniaIlosc\" style=\"display: none;\"\u003e\r\n\t\t\t\u003cdiv class=\"FloatLeft Ilosc\"\u003e\r\n\t\t\t\u003c/div\u003e\r\n\t\t\t\u003cdiv class=\"FloatLeft Tekst\"\u003e\r\n\t\t\t\u003c/div\u003e\r\n\t\t\t\u003cdiv class=\"ClearBoth\"\u003e\u003c/div\u003e\r\n\t\t\u003c/div\u003e\r\n\t\t\u003cdiv class=\"ClearBoth\"\u003e\u003c/div\u003e\r\n\t\u003c/a\u003e\r\n\u003c/div\u003e";
+            $(function() {
+                var items = '';
+                for (var i = 0; i < lastSearched.length; i++) {
+                    var item = lastSearchedItem.replace('#url#', lastSearched[i].url).replace('#aTitle#', lastSearched[i].title).replace('#formattedCrtieria#', lastSearched[i].formatedCriteria);
+                    items += item;
+                }
+
+                $('#LastSearchedBox .Formularz').html(items);
+            });
+
+            $(document.body).on('click', 'a#LastSearchShow', function() {
+                showLastSearched();
+                $('#LastSearchedBox').dialog({
+                    modal: true,
+                    minWidth: '540px',
+                    width: 'auto',
+                    resizable: false,
+                    dialogClass: 'no-title-header'
+                });
+                TraderLastSearched.alignVertically();
+                return false;
+            });
+        });
+
+        localizationHints.init($('.WyszukiwarkaPodstawowa input[name=Localization]'), '/Autocomplete/City');
+
+        window.youLeadSearchSubmit = function youLeadSearchSubmit(eventName) {
+            if (Monitor !== undefined) {
+                var formEl = $('#HpSearchForm');
+                var formValues = formEl.serialize();
+                var categoryValue;
+                var transactionValue;
+
+                switch (formEl.find('[name="CategoryName"]').val()) {
+                    case 'Mieszkanie':
+                        categoryValue = 'flat';
+                        break;
+                    case 'Dom':
+                        categoryValue = 'house';
+                        break;
+                    case 'Dzialka':
+                        categoryValue = 'plot';
+                        break;
+                    case 'Lokal uzytkowy':
+                        categoryValue = 'commercial';
+                        break;
+                    case 'Pokoj':
+                        categoryValue = 'room';
+                        break;
+                    case 'Garaz':
+                        categoryValue = 'garage';
+                        break;
+                    default:
+                        categoryName = '';
+                        break;
+                }
+                formValues += "&category=" + categoryValue;
+
+                switch (formEl.find('[name="AdType"]').val()) {
+                    case 'Sale':
+                        transactionValue = 'sale';
+                        break;
+                    case 'Rent':
+                        transactionValue = 'rent';
+                        break;
+                    case '':
+                        transactionValue = '';
+                        break;
+                    default:
+                        transactionValue = '';
+                        break;
+                }
+                formValues += "&transaction=" + transactionValue;
+
+                switch (formEl.find('[name="Media"]').val()) {
+                    case 'woda.458':
+                        formValues += "&MediaWoda=true";
+                    case 'prad.459':
+                        formValues += "&MediaPrad=true";
+                    case 'sila.460':
+                        formValues += "&MediaSila=true";
+                    case 'gaz.461':
+                        formValues += "&MediaGaz=true";
+                    case 'brak.10475':
+                        formValues += "&MediaBrak=true";
+                }
+
+                switch (formEl.find('[name="Kanalizacja"]').val()) {
+                    case 'brak.10471':
+                        formValues += "&KanalizacjaBrak=true";
+                    case 'szambo.463':
+                        formValues += "&KanalizacjaSzambo=true";
+                    case 'miejska.462':
+                        formValues += "&KanalizacjaMiejska=true";
+                }
+
+                Monitor.TrackWebEvent(eventName, formValues);
+            }
+        }
+
+    });
+</script>
+
+<script type="text/javascript">
+    var asFeatures = { };
+    asFeatures.Media = {"Dom":[{"v":"woda.458","l":"Woda","s":0},{"v":"prad.459","l":"Prąd","s":0},{"v":"sila.460","l":"Siła","s":0},{"v":"gaz.461","l":"Gaz","s":0},{"v":"brak.10475","l":"Brak","s":0}],"Dzialka":[{"v":"woda.10262","l":"Woda","s":0},{"v":"prad.10263","l":"Prąd","s":0},{"v":"sila.10264","l":"Siła","s":0},{"v":"gaz.10265","l":"Gaz","s":0},{"v":"brak.10476","l":"Brak","s":0}]};
+    asFeatures.Materialy = {"Mieszkanie":[{"v":"beton.240","l":"Beton","s":0},{"v":"cegla.241","l":"Cegła","s":0},{"v":"drewno.242","l":"Drewno","s":0},{"v":"pustak.243","l":"Pustak","s":0},{"v":"rama H.244","l":"Rama H","s":0},{"v":"wielka plyta.245","l":"Wielka płyta","s":0},{"v":"ytong.246","l":"Ytong","s":0},{"v":"inny.247","l":"Inny","s":0}],"Dom":[{"v":"beton.328","l":"Beton","s":0},{"v":"cegla.329","l":"Cegła","s":0},{"v":"drewno.330","l":"Drewno","s":0},{"v":"pustak.331","l":"Pustak","s":0},{"v":"rama H.332","l":"Rama H","s":0},{"v":"wielka plyta.333","l":"Wielka płyta","s":0},{"v":"ytong.334","l":"Ytong","s":0},{"v":"inny.335","l":"Inny","s":0}]};
+    asFeatures.Kuchnia = {"Mieszkanie":[{"v":"widna.10410","l":"Widna","s":0},{"v":"ciemna.10411","l":"Ciemna","s":0},{"v":"przeswit.10412","l":"Prześwit","s":0},{"v":"aneks.10413","l":"Aneks","s":0},{"v":"otwarta.10414","l":"Otwarta","s":0},{"v":"brak.10415","l":"Brak","s":0}],"Dom":[{"v":"widna.10416","l":"Widna","s":0},{"v":"ciemna.10417","l":"Ciemna","s":0},{"v":"przeswit.10418","l":"Prześwit","s":0},{"v":"aneks.10419","l":"Aneks","s":0},{"v":"otwarta.10420","l":"Otwarta","s":0},{"v":"brak.10421","l":"Brak","s":0}]};
+    asFeatures.DrogaDojazdowa = {"Dom":[{"v":"asfaltowa.465","l":"Asfaltowa","s":0},{"v":"utwardzona.466","l":"Utwardzona","s":0},{"v":"polna.467","l":"Polna","s":0},{"v":"brak.468","l":"Brak","s":0}],"Dzialka":[{"v":"asfaltowa.489","l":"Asfaltowa","s":0},{"v":"utwardzona.490","l":"Utwardzona","s":0},{"v":"polna.491","l":"Polna","s":0},{"v":"brak.492","l":"Brak","s":0}]};
+    asFeatures.Kanalizacja = {"Dom":[{"v":"brak.10471","l":"Brak","s":0},{"v":"szambo.463","l":"Szambo","s":0},{"v":"miejska.462","l":"Miejska","s":0}],"Dzialka":[{"v":"brak.10472","l":"Brak","s":0},{"v":"szambo.480","l":"Szambo","s":0},{"v":"miejska.479","l":"Miejska","s":0}]};
+    asFeatures.Przeznaczenie = {"Lokal uzytkowy":[{"v":"biuro.1061","l":"Biuro","s":0},{"v":"magazyn.1062","l":"Magazyn","s":0},{"v":"uslugi.1063","l":"Usługi","s":0},{"v":"handel.1064","l":"Handel","s":0},{"v":"gastronomia.1065","l":"Gastronomia","s":0},{"v":"gabinet.1066","l":"Gabinet","s":0},{"v":"warsztat.1067","l":"Warsztat","s":0},{"v":"pawilon.1068","l":"Pawilon","s":0},{"v":"hala.1069","l":"Hala","s":0},{"v":"centrum dystrybucyjne.1070","l":"Centrum dystrybucyjne","s":0},{"v":"centrum handlowe.1071","l":"Centrum handlowe","s":0},{"v":"hotel-pensjonat.1072","l":"Hotel-pensjonat","s":0},{"v":"produkcja.1073","l":"Produkcja","s":0},{"v":"inne.1074","l":"Inne","s":0}]};
+    asFeatures.TypDzialki = {"Dzialka":[{"v":"budowlana.415","l":"Budowlana","s":0},{"v":"komercyjna.416","l":"Komercyjna","s":0},{"v":"lesna.417","l":"Leśna","s":0},{"v":"lesna z prawem budowy.418","l":"Leśna z prawem budowy","s":0},{"v":"przemyslowo-handlowa.419","l":"Przemysłowo-handlowa","s":0},{"v":"rekreacyjna.420","l":"Rekreacyjna","s":0},{"v":"rolna.421","l":"Rolna","s":0},{"v":"siedliskowa.422","l":"Siedliskowa","s":0},{"v":"inwestycyjna.423","l":"Inwestycyjna","s":0},{"v":"gospodarstwo rolne.10473","l":"Gospodarstwo rolne","s":0},{"v":"inna.424","l":"Inna","s":0}]};
+</script>
+
+    <script type="text/javascript">
+        $(function () {
+            TraderLastSearched.updateStatus(function() {
+                var lastSearched = TraderLastSearched.getLatest();
+                $(function() {
+                    {
+                        var sc = [];
+                        for (var i = 0; i < lastSearched.length; i++) {
+                            sc.push(lastSearched[i].criteria);
+                        }
+                        TraderLastSearched.getSearchCounts('/Search/SearchCriteriaCount', sc);
+                    }
+                });
+
+                var lastSearchedBox = "\u003cdiv class=\"TwojeWyszukiwania\"\u003e\r\n\t\u003cdiv class=\"TwojeWyszukiwaniaWybor\"\u003e\r\n\t\t#lastSearchedItems#\r\n\t\u003c/div\u003e\r\n\u003c/div\u003e";
+                var lastSearchedItem = "\r\n\r\n \u003cdiv class=\"TwojeWyszukiwaniaElement\" onclick=\"dataLayer.push({\u0027event\u0027: \u0027hpSzukajS\u0027});\"\u003e\r\n    \u003ca href=\"#url#\" title=\"#aTitle#\" onmousedown=\"_kropka.push([\u0027GlownaKlikOstatnieWyszukiwanie\u0027, \u0027\u0027]);\"\u003e\r\n\t\t\u003cdiv class=\"FloatLeft TwojeWyszukiwaniaTresc\"\u003e\r\n\t\t\t#formattedCrtieria#\r\n\t\t\t\u003cspan class=\"ZanikanieTekstu\"\u003e\u003c/span\u003e\r\n\t\t\u003c/div\u003e\r\n\t\t\u003cdiv class=\"FloatRight TwojeWyszukiwaniaIlosc\" style=\"display: none;\"\u003e\r\n\t\t\t\u003cdiv class=\"FloatLeft Ilosc\"\u003e\r\n\t\t\t\u003c/div\u003e\r\n\t\t\t\u003cdiv class=\"FloatLeft Tekst\"\u003e\r\n\t\t\t\u003c/div\u003e\r\n\t\t\t\u003cdiv class=\"ClearBoth\"\u003e\u003c/div\u003e\r\n\t\t\u003c/div\u003e\r\n\t\t\u003cdiv class=\"ClearBoth\"\u003e\u003c/div\u003e\r\n\t\u003c/a\u003e\r\n\u003c/div\u003e";
+                if (lastSearched.length > 0) {
+                    $(function() {
+                        var items = '';
+                        for (var i = 0; i < lastSearched.length; i++) {
+                            var item = lastSearchedItem.replace('#url#', lastSearched[i].url).replace('#aTitle#', lastSearched[i].title).replace('#formattedCrtieria#', lastSearched[i].formatedCriteria);
+                            items += item;
+                        }
+
+                        lastSearchedBox = lastSearchedBox.replace('#lastSearchedItems#', items);
+                        $('.OstatnioWyszukiwaneKontener').html(lastSearchedBox);
+                        $('div.TwojeWyszukiwaniaPrzycisk').show();
+                    });
+                } else {
+                    $(function() {
+                        $('div.TwojeWyszukiwaniaPrzycisk').hide();
+                    });
+                }
+
+            });
+
+            checkViewCounterCookie();
+
+            if ($('#advertAlertBar').length) {
+                var advertAlert = new NotificationWindow('advertAlert');
+                advertAlert.initWindow();
+            }
+
+            if ($('#developerPromotionsBar').length) {
+                var developerPromotions = new NotificationWindow('developerPromotions');
+                developerPromotions.initWindow();
+            }
+
+            if ($('#oneToManyBar').length) {
+                var oneToMany = new NotificationWindow('oneToMany', {
+                    requestUrl: '/SendToMany/Send'
+                });
+
+                oneToMany.initWindow();
+            }
+
+            if (window.innerWidth >= 1024 && 'localStorage' in window && localStorage.getItem('lastUsedPhone') === null) {
+                var exitPopup = new ExitPopup({
+                    transactionTypes: {
+                        'Sale': {
+                            label: 'Kupię',
+                            range: {
+                                min: 50000,
+                                max: 2000000
+                            },
+                            initialValues: {
+                                min: 50000,
+                                max: 1200000
+                            },
+                            rounding: {
+                                '50000': '1000000',
+                                '100000': '2000000'
+                            }
+                        },
+                        'Rent': {
+                            label: 'Wynajmę',
+                            range: {
+                                min: 500,
+                                max: 20000
+                            },
+                            initialValues: {
+                                min: 500,
+                                max: 6000
+                            },
+                            rounding: {
+                                '100': '3500',
+                                '200': '6000',
+                                '1000': '20000'
+                            },
+                            histogramValues: [238, 238, 237, 237, 150, 150, 150, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+                        }
+                    },
+                    marketTypes: ['Wtorny', 'Pierwotny']
+                });
+                exitPopup.init();
+            }
+
+            if (CheckBSites !== undefined) {
+                CheckBSites(1);
+            }
+        });
+    </script>
+
+
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                TraderClipboard.checkInactiveUrl = '/Search/ClipboardInactiveAds';
+            });
+        </script>
+
+        <script type="text/javascript">
+    <!-- (c) 2008 Gemius SA / gemiusHeatMap(GHM+XY) / http://www.gazeta.pl-->
+    var ghmxy_align = 'center';
+    var ghmxy_type = 'absolute';
+    var ghmxy_identifier = "B82VTeN47cuBsZk32mamTMWnXhYZBS80wpxPFKMSTfr.b7";
+    var scriptEl = document.createElement('SCRIPT');
+    scriptEl.type = 'text/javascript';
+    scriptEl.src = 'http://mklik.gazeta.pl/hmapxy.js';
+    scriptEl.async = true;
+    document.head.appendChild(scriptEl);
+</script>
+
+        <!--
+Start of DoubleClick Floodlight Tag: Please do not remove
+Activity name of this tag: Domiporta
+URL of the webpage where the tag is expected to be placed: http://domiporta.pl
+This tag must be placed between the <body> and </body> tags, as close as possible to the opening tag.
+Creation Date: 01/11/2017
+-->
+<iframe src="https://6423209.fls.doubleclick.net/activityi;src=6423209;type=sales;cat=6clavs0h;qty=[Quantity];cost=[Revenue];dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;ord=[OrderID]?" width="1" height="1" frameborder="0" style="display:none"></iframe>
+<!-- End of DoubleClick Floodlight Tag: Please do not remove -->
+        <!-- Criteo remarketing -->
+<script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
+        <!-- Kod tagu remarketingowego Google -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            var google_conversion_id = 963610413;
+            var google_custom_params = window.google_tag_params;
+            var google_remarketing_only = true;
+            /* ]]> */
+        </script>
+        <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+        </script>
+        <noscript>
+            <div style="display:inline;">
+                <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/963610413/?value=0&amp;guid=ON&amp;script=0" />
+            </div>
+        </noscript>
+        <!-- YouLead -->
+<script type="text/javascript">
+    var youleadId = 'domiporta';
+    var youleadDC = true;
+
+    (function () {
+        var yl = document.createElement('script');
+        yl.type = 'text/javascript';
+        yl.async = true;
+        yl.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'm-' + youleadId + '.youlead.pl/m.js?ts=' + (new Date()).getTime();
+        document.getElementsByTagName('body')[0].appendChild(yl);
+    })();
+</script>
+
+
+<!-- RTB House -->
+            <iframe src="//creativecdn.com/tags?id=pr_dFDsvCQA7odZR0Pp0Jfy_listing_147909122,147817033,147742479,147352554" width="1" height="1" scrolling="no" frameborder="0" style="display: none;"></iframe>
+        <script type="text/javascript">
+            document.addEventListener("contactSubmitEvent", function (e) {
+                var orderId = new Date().getTime();
+
+                rtbIframe('//creativecdn.com/tags?id=pr_dFDsvCQA7odZR0Pp0Jfy_orderclick3_15.0_' + orderId  + '_147909122&amp;cd=default');
+            });
+
+            document.addEventListener("showPhoneNumbers", function (e) {
+                rtbIframe('//creativecdn.com/tags?id=pr_dFDsvCQA7odZR0Pp0Jfy_custom_actiontype_shownumber');
+                //Self removing eventlistner
+                e.target.removeEventListener(e.type, arguments.callee);
+            })
+        </script>
+    <script type="text/javascript">
+        document.addEventListener("clipboardAdd", function (e) {
+
+            if (typeof countEvent == "undefined" || countEvent == 0) {
+                var url = "//creativecdn.com/tags?id=pr_dFDsvCQA7odZR0Pp0Jfy_basketadd_" + e.target.dataset.rel;
+                rtbIframe(url);
+            }
+
+            if (typeof countEvent !== "undefined") {
+                ++countEvent;
+            }
+        });
+    </script>
+<!-- RTB House -->
+
+
+
+    </body>
+</html>
