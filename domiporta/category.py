@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 def get_category(url=None, category='nieruchomosci', transaction_type='wszystkie', voivodeship=None, city=None,
-                 street=None, **filters):
+                 street=None, filters=None):
     """
 
     :param url:
@@ -23,15 +23,18 @@ def get_category(url=None, category='nieruchomosci', transaction_type='wszystkie
     :return:
     """
     if not url:
-        url = get_url(category, transaction_type, voivodeship, city, street, **filters)
+        url = get_url(category, transaction_type, voivodeship, city, street, filters)
     max_number_page = get_max_number_page(url)
     offers = []
     for i in range(1, max_number_page + 1):
-        if filters or filters == {}:
-            page_url = url + "?"
-        else:
-            page_url = url + "&"
-        page_url += "PageNumger=" + str(i)
+        page_url = url
+        if i > 1:
+            if '?' not in url:
+                page_url += "?"
+            else:
+                page_url += "&"
+            page_url += "PageNumber=" + str(i)
+        print(page_url)
         offers_urls = get_offers_from_category(page_url)
         for offer_url in offers_urls:
             offers.append(offer_url)
@@ -46,7 +49,7 @@ def get_offers_from_category(url):
     """
     markup = BeautifulSoup(get_content_from_source(url), 'html.parser')
     offers_urls = []
-    offers = markup.find_all('div', class_='detail-card WynikiListaStandard NoweWyniki')
+    offers = markup.find_all('div', class_='detail-card')
     for offer in offers:
         offers_urls.append(offer.find('a').get('href'))
     return offers_urls
