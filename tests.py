@@ -15,6 +15,8 @@ else:
 @pytest.mark.parametrize('args, filters, url', [
     (('Mieszkanie', 'wynajme', 'Pomorskie', 'Gdańsk'), {'Pietro.From': 4, 'Pietro.To': 6},
      'http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdansk?Pietro.From=4&Pietro.To=6'),
+    (('Dom', 'sprzedam', 'Mazowieckie', 'Warszawa', 'Białołęka'), {},
+     'http://www.domiporta.pl/dom/sprzedam/mazowieckie/warszawa/bialoleka')
 ])
 def test_get_url(args, filters, url):
     assert domiporta.utils.get_url(*args, filters=filters) == url
@@ -54,3 +56,14 @@ def test_get_categoy(offers_search_markup):
             get_content.return_value = offers_search_markup
             assert isinstance(domiporta.category.get_category(
                 url='http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdansk'), type([]))
+
+
+def test_get_category_pages(offers_search_markup):
+    with mock.patch('domiporta.utils.get_content_from_source') as get_content:
+        with mock.patch('domiporta.utils.get_max_number_page') as get_max_page:
+            with mock.patch('domiporta.category.get_offers_from_category') as get_offers:
+                get_offers.return_value = ['1', '2']
+                get_max_page.return_value = 4
+                get_content.return_value = offers_search_markup
+                assert len(domiporta.category.get_category(
+                    url='http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdansk?Pietro.From=2')) > 2
