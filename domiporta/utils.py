@@ -30,8 +30,10 @@ def encode_text_to_html(text):
 def get_max_number_page(url):
     """ Parse number of pages for search result
 
-    :param url:
-    :return:
+    :param url: Url of Domiporta search web page
+    :type url: str
+    :return: number of pages with available offers in search result
+    :rtype: int
     """
     markup = BeautifulSoup(get_content_from_source(url), 'html.parser')
     max_number = markup.find(class_='pagination__separator').next.next.next.text
