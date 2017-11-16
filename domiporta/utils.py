@@ -5,8 +5,7 @@ import logging
 
 import requests
 from bs4 import BeautifulSoup
-from scrapper_helpers.utils import (caching, get_random_user_agent, key_md5,
-                                    replace_all)
+from scrapper_helpers.utils import caching, get_random_user_agent, key_md5, replace_all
 
 from . import BASE_URL
 
