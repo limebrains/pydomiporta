@@ -8,20 +8,10 @@ from bs4 import BeautifulSoup
 from scrapper_helpers.utils import replace_all, finder
 
 
-@finder(False, class_='detail-feature__value detail-feature__value--price')
-def get_price_for_offer(item, *args, **kwargs):
-    price = replace_all(item.text, {'\xa0': '', 'zł': ''})
-    return float(price)
-
-
-@finder(False, class_='detail-feature__name', text='Powierzchnia całkowita:')
-def get_surface_area_for_offer(item, *args, **kwargs):
-    area = re.match(r'\d+', item.find_next_sibling().text).group(0)
-    return float(area)
-
-
 @finder(False, class_='detail-feature__name', text='Liczba pokoi: ')
 def get_rooms_for_offer(item, *args, **kwargs):
+    if not item:
+        return None
     rooms = item.find_next_sibling().text
     return int(rooms)
 
@@ -34,27 +24,19 @@ def get_floor_for_offer(item, *args, **kwargs):
     return int(floor)
 
 
-@finder(False, class_='detail-feature__value detail-feature--full-localization')
-def get_location_for_offer(item, *args, **kwargs):
-    location = item.find_all('a')
-    return location
+@finder(False, class_='details-gallery-thumbnails')
+def get_images_for_offer(item, *args, **kwargs):
+    images_links = []
+    if item:
+        images = item.find_all('img')
+        for img in images:
+            images_links.append(img.get('src').replace('search-results', 'original'))
+    return images_links
 
 
-def get_voivodeship_for_offer(markup):
-    voivodeship = get_location_for_offer(markup)[0].text
-    return voivodeship
-
-
-def get_city_for_offer(markup):
-    city = get_location_for_offer(markup)[1].text
-    return city
-
-
-def get_street_for_offer(markup):
-    street = get_location_for_offer(markup)[-1].text
-    if not street:
-        return None
-    return street
+@finder(False, class_='details-description__full')
+def get_description_for_offer(item, *args, **kwargs):
+    return item.text
 
 
 def get_meta_data(markup):
@@ -63,17 +45,32 @@ def get_meta_data(markup):
     return data
 
 
+def get_gps_data(content):
+    try:
+        return str(content).split('showMapDialog(')[1].split(')')[0].split(', ')[:2]
+    except IndexError:
+        print('not found')
+
+
 def get_offer_data(url):
-    markup = BeautifulSoup(get_content_from_source(url), 'html.parser')
+    content = get_content_from_source(url)
+    markup = BeautifulSoup(content, 'html.parser')
     meta_data = get_meta_data(markup)
+    print(url)
 
     return {
-        'phone': meta_data.get('ContactPhone'),
-        'price': get_price_for_offer(markup),
-        'surface': get_surface_area_for_offer(markup),
+        'id': meta_data.get('AdvertId'),
+        'price': float(meta_data.get('AdvertPrice')),
+        'surface': float(meta_data.get('AdvertMeters').replace(',', '.')),
         'rooms': get_rooms_for_offer(markup),
         'floor': get_floor_for_offer(markup),
-        'voivodeship': get_voivodeship_for_offer(markup),
-        'city': get_city_for_offer(markup),
-        'street': get_street_for_offer(markup)
+        'voivodeship': meta_data.get('AdvertRegion'),
+        'city': meta_data.get('AdvertCity'),
+        'district': meta_data.get('AdvertDistrict'),
+        'street': meta_data.get('AdvertStreet'),
+        'phone': meta_data.get('ContactPhone'),
+        'gps': get_gps_data(content),
+        'images': get_images_for_offer(markup),
+        'description': get_description_for_offer(markup),
+        'url': url
     }

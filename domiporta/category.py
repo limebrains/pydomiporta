@@ -34,7 +34,6 @@ def get_category(url=None, category='nieruchomosci', transaction_type='wszystkie
             else:
                 page_url += "&"
             page_url += "PageNumber=" + str(i)
-        print(page_url)
         offers_urls = get_offers_from_category(page_url)
         for offer_url in offers_urls:
             offers.append(offer_url)
