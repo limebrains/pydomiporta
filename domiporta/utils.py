@@ -2,21 +2,26 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 import requests
-from urllib.parse import quote, urlparse
 from bs4 import BeautifulSoup
+from scrapper_helpers.utils import (caching, get_random_user_agent, key_md5,
+                                    replace_all)
+
 from . import BASE_URL
-from scrapper_helpers.utils import replace_all, get_random_user_agent, caching, key_md5
 
 log = logging.getLogger(__file__)
 POLISH_CHARACTERS_MAPPING = {"ą": "a", "ć": "c", "ę": "e", "ł": "l", "ń": "n", "ó": "o", "ś": "s", "ż": "z", "ź": "z"}
 
 
 def encode_text_to_html(text):
-    """
+    """ Change text to lower cases, gets rid of polish characters replacing them with simplified version,
+    replaces spaces with dashes
 
-    :param text:
-    :return:
+    :param text: text to encode
+    :type text: str
+    :return: encoded text which can be used in url
+    :rtype: str
     """
     replace_dict = POLISH_CHARACTERS_MAPPING
     replace_dict.update({' ': '-'})
@@ -24,7 +29,7 @@ def encode_text_to_html(text):
 
 
 def get_max_number_page(url):
-    """
+    """ Parse number of pages for search result
 
     :param url:
     :return:
@@ -36,15 +41,22 @@ def get_max_number_page(url):
 
 def get_url(category='nieruchomosci', transaction_type='wszystkie', voivodeship=None,
             city=None, street=None, filters=None):
-    """
+    """ Create url to Domiporta search web page with given parameters and filters
 
-    :param category:
-    :param transaction_type:
-    :param voivodeship:
-    :param city:
-    :param street:
-    :param filters:
-    :return:
+    :param category: Type of property of interest (Mieszkanie/Dom/Garaż/Działka)
+    :param transaction_type: Type of transaction
+    :param voivodeship: Voivodeship
+    :param city: City
+    :param street: Street
+    :param filters: Dictionary with additional filters
+    :type category:str, None
+    :type transaction_type: str, None
+    :type voivodeship: str, None
+    :type city: str, None
+    :type street: str, None
+    :type filters: dict, None
+    :return: Url to Domiporta search web page
+    :rtype: str
     """
     url = BASE_URL + encode_text_to_html(category) + "/" + encode_text_to_html(transaction_type)
     if voivodeship:

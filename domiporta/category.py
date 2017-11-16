@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from bs4 import BeautifulSoup
 import logging
-from .utils import get_url, get_max_number_page, get_content_from_source
+
+from bs4 import BeautifulSoup
+
+from .utils import get_content_from_source, get_max_number_page, get_url
 
 log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.DEBUG)
@@ -11,16 +13,24 @@ logging.basicConfig(level=logging.DEBUG)
 
 def get_category(url=None, category='nieruchomosci', transaction_type='wszystkie', voivodeship=None, city=None,
                  street=None, filters=None):
-    """
+    """ Parses available offer urls from given category search page
 
-    :param url:
-    :param category:
-    :param transaction_type:
-    :param voivodeship:
-    :param city:
-    :param street:
-    :param filters:
-    :return:
+    :param url: Url to search web page
+    :param category: Type of property of interest (Mieszkanie/Dom/Garaż/Działka)
+    :param transaction_type: Type of transaction
+    :param voivodeship: Voivodeship
+    :param city: City
+    :param street: Street
+    :param filters: Dictionary with additional filters
+    :type url: str, None
+    :type category:str, None
+    :type transaction_type: str, None
+    :type voivodeship: str, None
+    :type city: str, None
+    :type street: str, None
+    :type filters: dict, None
+    :return: List of urls of all offers for given parameters
+    :rtype: list
     """
     if not url:
         url = get_url(category, transaction_type, voivodeship, city, street, filters)
@@ -41,10 +51,12 @@ def get_category(url=None, category='nieruchomosci', transaction_type='wszystkie
 
 
 def get_offers_from_category(url):
-    """
+    """ Parses available offer urls from given category from given page
 
-    :param url:
-    :return:
+    :param url: Defined url for Domiporta page with offers
+    :type url: str
+    :return: List of urls from given page
+    :rtype: list
     """
     markup = BeautifulSoup(get_content_from_source(url), 'html.parser')
     offers_urls = []
