@@ -9,9 +9,13 @@ Python scrapper for domiporta
 # Running
 
 ### Installation
-
+Version from https://pypi.python.org/pypi/pydomiporta:
 ```
-pip install -r requirements.txt
+pip install pydomiporta
+```
+Latest version from git:
+```
+pip install git+git://github.com/limebrains/pydomiporta.git
 ```
 
 ### Example script
