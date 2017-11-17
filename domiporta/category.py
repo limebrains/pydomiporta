@@ -5,7 +5,8 @@ import logging
 
 from bs4 import BeautifulSoup
 
-from .utils import get_content_from_source, get_max_number_page, get_url
+import domiporta
+import domiporta.utils
 
 log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.DEBUG)
@@ -32,21 +33,25 @@ def get_category(url=None, category='nieruchomosci', transaction_type='wszystkie
     :return: List of urls of all offers for given parameters
     :rtype: list
     """
-    if not url:
-        url = get_url(category, transaction_type, voivodeship, city, street, filters)
-    max_number_page = get_max_number_page(url)
-    offers = []
-    for i in range(1, max_number_page + 1):
-        page_url = url
-        if i > 1:
-            if '?' not in url:
-                page_url += "?"
-            else:
-                page_url += "&"
-            page_url += "PageNumber=" + str(i)
-        offers_urls = get_offers_from_category(page_url)
-        for offer_url in offers_urls:
-            offers.append(offer_url)
+    if url is None:
+        url = domiporta.utils.get_url(category, transaction_type, voivodeship, city, street, filters)
+
+    page, max_number_page, offers = 1, None, []
+
+    while max_number_page is None or page <= max_number_page:
+        page_number = "PageNumber=" + str(page)
+        join_param = '?' if '?' not in url else '&'
+
+        page_url = "{0}{1}{2}".format(url, join_param, page_number)
+        offers_urls, markup = get_offers_from_category(page_url)
+        offers += offers_urls
+
+        if page == 1:
+            max_number_page = domiporta.utils.get_max_number_page(markup)
+        # assert False
+
+        page += 1
+
     return offers
 
 
@@ -58,9 +63,9 @@ def get_offers_from_category(url):
     :return: List of urls from given page
     :rtype: list
     """
-    markup = BeautifulSoup(get_content_from_source(url), 'html.parser')
+    markup = BeautifulSoup(domiporta.utils.get_content_from_source(url), 'html.parser')
     offers_urls = []
     offers = markup.find_all('div', class_='detail-card')
     for offer in offers:
         offers_urls.append(offer.find('a').get('href'))
-    return offers_urls
+    return offers_urls, markup

@@ -5,6 +5,7 @@ import domiporta.category
 import domiporta.offer
 import domiporta.utils
 import pytest
+from bs4 import BeautifulSoup
 
 if sys.version_info < (3, 3):
     from mock import mock
@@ -44,26 +45,30 @@ def test_get_offer_data(offer_markup):
 
 
 def test_get_max_page(offers_search_markup):
-    with mock.patch('domiporta.utils.get_content_from_source') as get_content:
-        get_content.return_value = offers_search_markup
-        assert domiporta.utils.get_max_number_page('') == 1
+    assert domiporta.utils.get_max_number_page(BeautifulSoup(offers_search_markup, 'html.parser')) == 1
 
 
-def test_get_categoy(offers_search_markup):
+@pytest.mark.parametrize('args', [('url=None','Mieszkanie', 'Wynajme', 'Pomorskie', 'Gdańsk')])
+def test_get_categoy(offers_search_markup, args):
     with mock.patch('domiporta.utils.get_content_from_source') as get_content:
         with mock.patch('domiporta.utils.get_max_number_page') as get_max_page:
             get_max_page.return_value = 1
             get_content.return_value = offers_search_markup
-            assert isinstance(domiporta.category.get_category(
-                url='http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdansk'), type([]))
+            assert isinstance(domiporta.category.get_category(*args), type([]))
 
 
 def test_get_category_pages(offers_search_markup):
     with mock.patch('domiporta.utils.get_content_from_source') as get_content:
         with mock.patch('domiporta.utils.get_max_number_page') as get_max_page:
             with mock.patch('domiporta.category.get_offers_from_category') as get_offers:
-                get_offers.return_value = ['1', '2']
-                get_max_page.return_value = 4
+                expected_pages = 4
+                offers_per_page = ['1', '2']
+                category_url = 'http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdansk?Pietro.From=2'
+
+                get_offers.return_value = offers_per_page, offers_search_markup
+                get_max_page.return_value = expected_pages
                 get_content.return_value = offers_search_markup
-                assert len(domiporta.category.get_category(
-                    url='http://www.domiporta.pl/mieszkanie/wynajme/pomorskie/gdansk?Pietro.From=2')) > 2
+
+                all_offers = domiporta.category.get_category(url=category_url)
+
+                assert len(all_offers) == expected_pages * len(offers_per_page)

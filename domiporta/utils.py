@@ -4,8 +4,7 @@
 import logging
 
 import requests
-from bs4 import BeautifulSoup
-from scrapper_helpers.utils import caching, get_random_user_agent, key_md5, replace_all
+from scrapper_helpers.utils import caching, get_random_user_agent, key_md5, replace_all, finder
 
 from . import BASE_URL
 
@@ -27,17 +26,15 @@ def encode_text_to_html(text):
     return replace_all(text.lower(), replace_dict)
 
 
-def get_max_number_page(url):
+@finder(many=False, class_='pagination__input')
+def get_max_number_page(item, *args, **kwargs):
     """ Parse number of pages for search result
 
-    :param url: Url of Domiporta search web page
-    :type url: str
+    :param item: Tag html found by finder in html markup
     :return: number of pages with available offers in search result
     :rtype: int
     """
-    markup = BeautifulSoup(get_content_from_source(url), 'html.parser')
-    max_number = markup.find(class_='pagination__separator').next.next.next.text
-    return int(max_number)
+    return int(item.attrs.get('max'))
 
 
 def get_url(category='nieruchomosci', transaction_type='wszystkie', voivodeship=None,

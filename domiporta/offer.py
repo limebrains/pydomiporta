@@ -5,10 +5,11 @@ import json
 from bs4 import BeautifulSoup
 from scrapper_helpers.utils import finder
 
-from .utils import get_content_from_source
+import domiporta
+import domiporta.utils
 
 
-@finder(False, class_='detail-feature__name', text='Liczba pokoi: ')
+@finder(many=False, class_='detail-feature__name', text='Liczba pokoi: ')
 def get_rooms_for_offer(item, *args, **kwargs):
     """ Parse information about numbers of rooms
 
@@ -16,13 +17,11 @@ def get_rooms_for_offer(item, *args, **kwargs):
     :return: Number of rooms or None if information not given
     :rtype: int, None
     """
-    if not item:
-        return None
-    rooms = item.find_next_sibling().text
+    rooms = item.find_next_sibling().text if item else None
     return int(rooms)
 
 
-@finder(False, class_='detail-feature__name', text='Piętro: ')
+@finder(many=False, class_='detail-feature__name', text='Piętro: ')
 def get_floor_for_offer(item, *args, **kwargs):
     """ Parse information about number of the floor
 
@@ -33,12 +32,10 @@ def get_floor_for_offer(item, *args, **kwargs):
     if not item:
         return None
     floor = item.find_next_sibling().text
-    if floor == 'Parter':
-        return 0
-    return int(floor)
+    return int(floor) if floor != 'Parter' else 0
 
 
-@finder(False, class_='details-gallery-thumbnails')
+@finder(many=False, class_='details-gallery-thumbnails')
 def get_images_for_offer(item, *args, **kwargs):
     """ Parse images from offer
 
@@ -54,7 +51,7 @@ def get_images_for_offer(item, *args, **kwargs):
     return images_links
 
 
-@finder(False, class_='details-description__full')
+@finder(many=False, class_='details-description__full')
 def get_description_for_offer(item, *args, **kwargs):
     """ Parse description of offer
 
@@ -66,7 +63,7 @@ def get_description_for_offer(item, *args, **kwargs):
 
 
 def get_meta_data(markup):
-    """ parse meta data
+    """ Parse meta data
 
     :param markup: raw html
     :return: dictionary with data
@@ -87,7 +84,6 @@ def get_gps_data(content):
     try:
         return str(content).split('showMapDialog(')[1].split(')')[0].split(', ')[:2]
     except IndexError:
-        print('not found')
         return None
 
 
@@ -99,10 +95,9 @@ def get_offer_data(url):
     :return: Details about given offer
     :rtype: dict
     """
-    content = get_content_from_source(url)
+    content = domiporta.utils.get_content_from_source(url)
     markup = BeautifulSoup(content, 'html.parser')
     meta_data = get_meta_data(markup)
-    print(url)
 
     return {
         'id': meta_data.get('AdvertId'),
