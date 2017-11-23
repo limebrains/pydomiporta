@@ -17,8 +17,9 @@ def get_rooms_for_offer(item, *args, **kwargs):
     :return: Number of rooms or None if information not given
     :rtype: int, None
     """
-    rooms = item.find_next_sibling().text if item else None
-    return int(rooms)
+    if not item:
+        return None
+    return int(item.find_next_sibling().text)
 
 
 @finder(many=False, class_='detail-feature__name', text='Piętro: ')
