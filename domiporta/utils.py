@@ -64,12 +64,12 @@ def get_url(category='nieruchomosci', transaction_type='wszystkie', voivodeship=
             if street:
                 url += "/" + encode_text_to_html(street)
     if filters and len(filters) > 0:
-        for i, param in enumerate(filters):
+        for i, key in enumerate(sorted(filters.keys())):
             if i == 0:
                 url += "?"
             else:
                 url += "&"
-            url += "{0}={1}".format(param, filters[param])
+            url += "{0}={1}".format(key, filters[key])
     return url
 
 
