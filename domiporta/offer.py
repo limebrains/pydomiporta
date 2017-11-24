@@ -102,8 +102,9 @@ def get_offer_data(url):
 
     return {
         'id': meta_data.get('AdvertId'),
-        'price': float(meta_data.get('AdvertPrice')),
-        'surface': float(meta_data.get('AdvertMeters').replace(',', '.')),
+        'price': float(meta_data.get('AdvertPrice')) if meta_data.get('AdvertPrice') is not None else None,
+        'surface': float(meta_data.get('AdvertMeters').replace(',', '.')) if meta_data.get('AdvertPrice') is not None
+        else None,
         'rooms': get_rooms_for_offer(markup),
         'floor': get_floor_for_offer(markup),
         'voivodeship': meta_data.get('AdvertRegion'),
